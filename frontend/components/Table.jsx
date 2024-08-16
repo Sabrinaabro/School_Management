@@ -1,5 +1,6 @@
 import React from 'react';
-import { Table as AntTable, Button } from 'antd';
+import { useState } from 'react';
+import { Table as AntTable, Button, Modal } from 'antd';
 import { EditOutlined, DeleteFilled, PlusOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 
@@ -166,13 +167,36 @@ const handleDelete = (record) => {
 };
 
 const Table = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  
+    const showModal = () => {
+      setIsModalOpen(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalOpen(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalOpen(false);
+    };
   return (
     <Container>
       <HeaderContainer>
         <HeaderTitle>Student List</HeaderTitle>
-        <AddButton icon={<PlusOutlined />}>Add Student</AddButton>
+        <AddButton icon={<PlusOutlined />} onClick={showModal}>
+          Add Student
+        </AddButton>
       </HeaderContainer>
       <AntTable columns={columns} dataSource={data} onChange={onChange} />
+      <Modal
+        title="Add Student"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Modal content for adding a student goes here...</p>
+      </Modal>
     </Container>
   );
 };
