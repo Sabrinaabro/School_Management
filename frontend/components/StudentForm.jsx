@@ -11,10 +11,12 @@ const { Title } = Typography;
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 100vh;
   padding-top: 110px; 
-  background: #f0f2f5;
+  width: 100vw;
+  background: #B9D9EB;
+  
 `;
 
 const FormWrapper = styled.div`
@@ -26,10 +28,19 @@ const FormWrapper = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   margin: 0 auto;
 `;
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  margin-right: 130px; 
+`;
 
 const SubmitButton = styled(Button)`
   background-color: #1890ff;
   border-color: #1890ff;
+  width: 100%;
+  max-width: 200px;
   &:hover {
     background-color: #40a9ff;
     border-color: #40a9ff;
@@ -166,9 +177,11 @@ const StudentForm = () => {
           <Form.Item
             wrapperCol={{ offset: 6, span: 18 }} 
           >
+            <ButtonWrapper>
             <SubmitButton type="primary" htmlType="submit">
               Add Student
             </SubmitButton>
+            </ButtonWrapper>
           </Form.Item>
         </Form>
       </FormWrapper>
