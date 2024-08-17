@@ -12,17 +12,15 @@ const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding-top: 110px; 
-  width: 100vw;
-  background: #B9D9EB;
+  min-height: 100vh; 
+  background: #fff;
   
 `;
 
 const FormWrapper = styled.div`
   width: 100%;
   max-width: 700px;
-  background: #fff;
+  background: #B9D9EB;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -83,14 +81,6 @@ const StudentForm = () => {
             rules={[{ required: true, message: 'Please enter the student\'s full name' }]}
           >
             <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Age"
-            name="age"
-            rules={[{ required: true, message: 'Please enter the student\'s age' }]}
-          >
-            <InputNumber min={3} max={18} />
           </Form.Item>
 
           <Form.Item
