@@ -150,21 +150,6 @@ const StudentForm = () => {
           </Form.Item>
 
           <Form.Item
-            label="Upload Photo"
-            name="photo"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            extra="Please upload a recent photo of the student"
-          >
-            <Upload action="/upload.do" listType="picture-card">
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item
             wrapperCol={{ offset: 6, span: 18 }} 
           >
             <ButtonWrapper>
