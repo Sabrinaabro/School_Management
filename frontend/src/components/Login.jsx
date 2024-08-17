@@ -86,13 +86,6 @@ const Login = () => {
             <Input.Password />
           </Form.Item>
 
-          <Form.Item
-            name="remember"
-            valuePropName="checked"
-          >
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
           <Form.Item>
             <StyledButton type="primary" htmlType="submit">
               Login
