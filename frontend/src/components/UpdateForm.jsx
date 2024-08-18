@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Button, DatePicker, Form, Input, Radio, Select } from 'antd'; 
+import React, { useEffect } from 'react';
+import { Button, DatePicker, Form, Input, Radio, Select, Typography } from 'antd'; 
 import styled from 'styled-components';
-import Typography from 'antd/es/typography/Typography';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -24,11 +23,11 @@ const FormWrapper = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   margin: 0 auto;
 `;
+
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  
   margin-right: 130px; 
 `;
 
@@ -43,26 +42,24 @@ const SubmitButton = styled(Button)`
   }
 `;
 
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
-
-const StudentForm = () => {
+const UpdateForm = ({ data, onSubmit }) => {
   const [form] = Form.useForm();
-  const [componentDisabled, setComponentDisabled] = useState(false);
+
+  // Pre-fill the form fields with studentData
+  useEffect(() => {
+    form.setFieldsValue(data);
+  }, [data, form]);
 
   const handleSubmit = (values) => {
     console.log('Form Values:', values);
+    onSubmit(values); // Call the submit handler passed as prop
   };
 
   return (
     <PageWrapper>
       <FormWrapper>
         <Title level={2} style={{ textAlign: 'center', marginBottom: '20px', color: '#333' }}>
-          Student Form
+          Update Student Information
         </Title>
 
         <Form
@@ -71,7 +68,6 @@ const StudentForm = () => {
           wrapperCol={{ span: 16 }} 
           layout="horizontal"
           onFinish={handleSubmit}
-          disabled={componentDisabled}
         >
           <Form.Item
             label="Full Name"
@@ -119,7 +115,6 @@ const StudentForm = () => {
               <Option value="11">Grade 8</Option>
               <Option value="12">Grade 9</Option>
               <Option value="13">Grade 10</Option>
-              
             </Select>
           </Form.Item>
 
@@ -151,9 +146,9 @@ const StudentForm = () => {
             wrapperCol={{ offset: 6, span: 18 }} 
           >
             <ButtonWrapper>
-            <SubmitButton type="primary" htmlType="submit">
-              Add Student
-            </SubmitButton>
+              <SubmitButton type="primary" htmlType="submit">
+                Update Student
+              </SubmitButton>
             </ButtonWrapper>
           </Form.Item>
         </Form>
@@ -162,4 +157,4 @@ const StudentForm = () => {
   );
 };
 
-export default StudentForm;
+export default UpdateForm;

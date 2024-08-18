@@ -2,51 +2,69 @@ import React from 'react'
 import Table from '../components/Table';
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Table as AntTable, Button, Modal } from 'antd';
+import { Button, Modal, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import StudentForm from '../components/StudentForm';
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [data, setData] = useState([
-    { key: '1', fname: "Williamson", name: 'John Brown', age: 32, address: 'New York No. 1 Lake Park', gender: 'Male', dob: '2001-01-01', classGrade: 'Grade 1', contactNumber: '1234567890', photo: 'photo1.jpg', fees: 'Paid' },
-    { key: '2', fname: "Steve Harrington", name: 'Jim Green', age: 42, address: 'London No. 1 Lake Park', gender: 'Male', dob: '2002-02-02', classGrade: 'Grade 2', contactNumber: '0987654321', photo: 'photo2.jpg', fees: 'Unpaid' },
-    { key: '3', fname: "Williamson Den", name: 'Joe Black', age: 32, address: 'Sydney No. 1 Lake Park', gender: 'Male', dob: '2003-03-03', classGrade: 'Grade 1', contactNumber: '2345678901', photo: 'photo3.jpg', fees: 'Paid' },
-    { key: '4', fname: "Joe Biden", name: 'Jim Red', age: 32, address: 'London No. 2 Lake Park', gender: 'Male', dob: '2004-04-04', classGrade: 'Grade 2', contactNumber: '3456789012', photo: 'photo4.jpg', fees: 'Unpaid' },
-    { key: '5', fname: "Hop", name: 'Jim Blue', age: 32, address: 'London No. 2 Lake Park', gender: 'Male', dob: '2005-05-05', classGrade: 'Nursery', contactNumber: '4567890123', photo: 'photo5.jpg', fees: 'Paid' },
-  ]);
+  const [editForm] = Form.useForm();  
+  const [addForm] = Form.useForm();
+  const [data, setData] = useState([]);
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
 
-  const handleCancel = () => {
+  const handleAdd = (value) => {
+    const newRecord = {
+      key: Date.now().toString(), 
+      name: value.fullName, 
+      fname: value.parentName,
+      gender: value.gender,
+      dob: value.dob ? values.dob.format('YYYY-MM-DD') : '', 
+      classGrade: value.grade, 
+      contactNumber: value.contactNumber,
+      address: value.address,
+      fees: 'Unpaid', 
+    };
+  
+    setData([...data, newRecord]);
     setIsModalOpen(false);
-  };
+    addForm.resetFields();
+  };  
+
   return (
     <>
     <Container>
-    <HeaderContainer>
+      <HeaderContainer>
         <HeaderTitle>Student List</HeaderTitle>
-        <AddButton icon={<PlusOutlined />} onClick={showModal}>
-          Add Student
-        </AddButton>
+        <ButtonContainer>
+          <AddButton icon={<PlusOutlined />} onClick={showModal}>
+            Add Student
+          </AddButton>
+          
+        </ButtonContainer>
       </HeaderContainer>
-    <Table data={data} />
-    <Modal
+      <Table data={data} />
+      <Modal
         title="Add Student"
         open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        okText="Add"
+        cancelText="Cancel"
+        onCancel={() => setIsModalOpen(false)}
+        onOk={() => addForm.submit()}
       >
+        <Form
+          form={addForm}
+          layout="vertical"
+          onFinish={handleAdd}
+        ></Form>
         <StudentForm />
       </Modal>
     </Container>
-    </>
-  )
-}
+      </>
+);
+};
 
 const Container = styled.div`
   width: auto;
@@ -68,9 +86,12 @@ const HeaderTitle = styled.h2`
   color: #40a9ff;
 `;
 
-const AddButton = styled(Button)`
+const ButtonContainer = styled.div`
   display: flex;
-  align-items: center;
+  gap: 10px; /* Space between buttons */
+`;
+
+const AddButton = styled(Button)`
   background-color: #1890ff;
   color: #fff;
   border: none;
@@ -80,24 +101,5 @@ const AddButton = styled(Button)`
   }
 `;
 
-const StyledTable = styled(AntTable)`
-  .ant-table-thead > tr > th {
-    background-color: #E04700; 
-    color: #333;
-    font-weight: 1600; 
-  }
-
-  .ant-table-tbody > tr:nth-child(odd) {
-    background-color: #4BA1E7; 
-  }
-
-  .ant-table-tbody > tr:nth-child(even) {
-    background-color: #F4E04D; 
-  }
-
-  .ant-table-cell {
-    padding: 16px; 
-  }
-`;
 
 export default Dashboard;

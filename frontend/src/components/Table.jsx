@@ -1,13 +1,31 @@
-import React from 'react';
-import { Table as AntTable, Button  } from 'antd';
-import { EditFilled, DeleteFilled  } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Table as AntTable, Badge, Button, Popconfirm, Modal, Form } from 'antd';
+import { EditFilled, DeleteFilled } from '@ant-design/icons';
 import styled from 'styled-components';
+import UpdateForm from './UpdateForm';
+
+const StyledBadgeRibbon = styled(Badge.Ribbon)`
+  .ant-badge-ribbon {
+    color: #fff; 
+    font-weight: bold; 
+    margin: 0 8px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center; 
+  }
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto; 
+`;
 
 const StyledTable = styled(AntTable)`
   .ant-table-thead > tr > th {
     background-color: #FFE4E1; 
     color: #333;
-    font-weight: 1600; 
+    font-weight: 600; 
   }
 
   .ant-table-tbody > tr:nth-child(odd) {
@@ -23,13 +41,18 @@ const StyledTable = styled(AntTable)`
   }
 `;
 
-
 const generateFilters = (data, key) => {
   const uniqueValues = Array.from(new Set(data.map(item => item[key]))).filter(value => value);
   return uniqueValues.map(value => ({ text: value, value }));
 };
 
 const Table = (props) => {
+  const [data, setData] = useState(props.data);
+  const [editingRecord, setEditingRecord] = useState(null);
+  const [isModalOpen, setisModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  
+
   const columns = [
     {
       title: 'Name',
@@ -87,23 +110,42 @@ const Table = (props) => {
       onFilter: (value, record) => record.address.includes(value),
       width: '25%',
     },
-
     {
-      title: 'Status  ',
+      title: 'Status',
       dataIndex: 'fees',
       filters: generateFilters(props.data, 'fees'),
       filterSearch: true,
       onFilter: (value, record) => record.fees === value,
       width: '10%',
+      render: (fees) => (
+        <StyledBadgeRibbon
+          text={fees === 'Paid' ? 'Paid' : 'Unpaid'}
+          color={fees === 'Paid' ? 'lime' : 'volcano'}
+        />
+      ),
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <span style={{ display: "flex", gap: "0.5rem", alignItems: "center", justifyContent: "center" }}>
-          <Button icon={<DeleteFilled style={{ color: '#BD1B0F' }} />} onClick={() => handleDelete(record)} />
-          <Button icon={<EditFilled style={{ color: 'green' }} />} onClick={() => handleEdit(record)} style={{ marginRight: 8 }} />
-        </span>
+      {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <span style={{ display: "flex", gap: "0.5rem", alignItems: "center", justifyContent: "center" }}>
+            <Popconfirm
+              title="Are you sure to delete this student?"
+              onConfirm={() => handleDelete(record.key)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="link"
+                icon={<DeleteFilled style={{ color: '#BD1B0F' }} />}
+              />
+            </Popconfirm>
+            <Button
+              icon={<EditFilled style={{ color: 'green' }} />}
+              onClick={() => handleEdit(record)}
+              style={{ marginRight: 8 }}
+            />
+          </span>
       ),
     },
   ];
@@ -113,20 +155,44 @@ const Table = (props) => {
   };
 
   const handleEdit = (record) => {
-    console.log('Edit:', record);
+    setEditingRecord(record);
+    setisModalOpen(true);
   };
 
-  const handleDelete = (record) => {
-    console.log('Delete:', record);
+  const handleDelete = (key) => {
+    console.log(`Deleting record with key: ${key}`); // Debugging log
+    const newData = data.filter(item => item.key !== key);
+    console.log('Updated data:', newData); // Debugging log
+    setData(newData);
+  };
+  const handleUpdate = (values) => {
+    const newData = data.map(item =>
+      item.key === editingRecord.key ? { ...item, ...values } : item
+    );
+    setData(newData);
+    setisModalOpen(false);
+    setEditingRecord(null);
   };
 
-
-
-  return (
-    <>
-      <StyledTable columns={columns} dataSource={props.data} onChange={onChange} />
-    </>
-  );
-};
+  return( 
+ <> 
+  <StyledTable columns={columns} dataSource={data} rowKey="key" />
+  <Modal
+        title="Edit Student"
+        open={isModalOpen}
+        okText="Update"
+        cancelText="Cancel"
+        onCancel={() => setisModalOpen(false)}
+        onOk={() => form.submit()}
+      >
+        <Form
+          layout="vertical"
+          initialValues={editingRecord}
+          onFinish={handleUpdate}
+        ></Form>
+        <UpdateForm />
+        </Modal>
+        </>
+)};
 
 export default Table;

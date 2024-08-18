@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Login from './components/Login';
 import PreLoader from './components/PreLoader';
+import UpdateForm from './components/UpdateForm';
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/login" element={<Login />} />
       <Route path="/loader" element={<PreLoader />} />
+      <Route path="/update" element={<UpdateForm />} />
     </Routes>
   );
 }
