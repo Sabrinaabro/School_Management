@@ -27,6 +27,7 @@ const Dashboard = () => {
       address: value.address,
       fees: 'Unpaid', 
     };
+    console.log(value);
   
     setData([...data, newRecord]);
     setIsModalOpen(false);

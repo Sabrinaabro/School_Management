@@ -176,7 +176,7 @@ const Table = (props) => {
 
   return( 
  <> 
-  <StyledTable columns={columns} dataSource={data} rowKey="key" />
+  <StyledTable columns={columns} dataSource={props.data} rowKey="key" />
   <Modal
         title="Edit Student"
         open={isModalOpen}
