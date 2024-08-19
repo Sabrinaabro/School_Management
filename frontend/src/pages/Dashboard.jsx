@@ -9,7 +9,28 @@ import StudentForm from "../components/StudentForm";
 const Dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addForm] = Form.useForm();
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([
+        {
+            name: "ABc",
+            fname: "dfds",
+            gender: "male",
+            dob: "2021-01-21",
+            classGrade: "Grade 1",
+            contactNumber: 564654654654,
+            address: "dfdsf df sdfsdf ",
+            fees: "Paid",
+        },
+        {
+            name: "ABcdfds fsdf",
+            fname: "dfds kjnkn kj ",
+            gender: "female",
+            dob: "2028-01-26",
+            classGrade: "Grade 1",
+            contactNumber: 66994654,
+            address: "dfdsf df sdfsdf ",
+            fees: "Unpaid",
+        },
+    ]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -28,10 +49,10 @@ const Dashboard = () => {
             fees: "Unpaid",
         };
         setData([...data, newRecord]);
+        console.log(value);
         setIsModalOpen(false);
         addForm.resetFields();
     };
-    
 
     return (
         <>
@@ -75,7 +96,7 @@ const HeaderTitle = styled.h2`
 
 const ButtonContainer = styled.div`
     display: flex;
-    gap: 10px; 
+    gap: 10px;
 `;
 
 const AddButton = styled(Button)`

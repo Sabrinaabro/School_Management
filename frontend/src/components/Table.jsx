@@ -48,6 +48,7 @@ const generateFilters = (data, key) => {
 
 const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedRowValues, setSelectedRowValues] = useState({});
     const [form] = Form.useForm();
     const [editForm] = Form.useForm();
 
@@ -137,7 +138,7 @@ const Table = (props) => {
                     </Popconfirm>
                     <Button
                         icon={<EditFilled style={{ color: "green" }} />}
-                        onClick={showModal}
+                        onClick={() => showModal(record)}
                         style={{ marginRight: 8 }}
                     />
                 </span>
@@ -155,10 +156,11 @@ const Table = (props) => {
         console.log("Updated data:", newData);
         props.setData(newData);
     };
+
     const handleEdit = (value) => {
-        setSelectedRecord(value); 
-        setIsModalOpen(true); 
-        editForm.setFieldsValue({  
+        setSelectedRecord(value);
+        setIsModalOpen(true);
+        editForm.setFieldsValue({
             fullName: value.name,
             parentName: value.fname,
             gender: value.gender,
@@ -168,13 +170,15 @@ const Table = (props) => {
             address: value.address,
         });
     };
-    const showModal = () => {
+
+    const showModal = (values) => {
+        setSelectedRowValues(values);
         setIsModalOpen(true);
     };
 
     return (
         <>
-            <StyledTable columns={columns} dataSource={props.data} rowKey="key" onRow={ (value)=>console.log(value)} />
+            <StyledTable columns={columns} dataSource={props.data} rowKey="key" />
             <Modal
                 title="Edit Student"
                 open={isModalOpen}
@@ -183,7 +187,7 @@ const Table = (props) => {
                 onCancel={() => setIsModalOpen(false)}
                 footer={false}
             >
-                <UpdateForm handleEdit={handleEdit} form={editForm}/>
+                <UpdateForm handleEdit={handleEdit} form={editForm} selectedRowValues={selectedRowValues} />
             </Modal>
         </>
     );
