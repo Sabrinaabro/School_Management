@@ -42,17 +42,17 @@ const SubmitButton = styled(Button)`
   }
 `;
 
-const UpdateForm = ({ data, onSubmit }) => {
+const UpdateForm = ({  data, onSubmit }) => {
   const [form] = Form.useForm();
 
-  // Pre-fill the form fields with studentData
+ 
   useEffect(() => {
     form.setFieldsValue(data);
   }, [data, form]);
 
   const handleSubmit = (values) => {
     console.log('Form Values:', values);
-    onSubmit(values); // Call the submit handler passed as prop
+    onSubmit(values); 
   };
 
   return (
