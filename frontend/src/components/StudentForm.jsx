@@ -43,13 +43,6 @@ const SubmitButton = styled(Button)`
     }
 `;
 
-const normFile = (e) => {
-    if (Array.isArray(e)) {
-        return e;
-    }
-    return e?.fileList;
-};
-
 const StudentForm = (props) => {
     const [componentDisabled, setComponentDisabled] = useState(false);
 

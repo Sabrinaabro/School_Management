@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { Component, useEffect } from "react";
 import { Button, DatePicker, Form, Input, Radio, Select, Typography } from "antd";
 import styled from "styled-components";
 import dayjs from "dayjs";
+import { useState } from "react";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -43,8 +44,9 @@ const SubmitButton = styled(Button)`
     }
 `;
 
-const UpdateForm = ({ data, onSubmit, selectedRowValues }) => {
+const UpdateForm = ({  selectedRowValues },props) => {
     const [form] = Form.useForm();
+    const [componentDisabled, setComponentDisabled] = useState(false);
 
     // useEffect(() => {
     //     form.setFieldsValue(data);
@@ -66,10 +68,14 @@ const UpdateForm = ({ data, onSubmit, selectedRowValues }) => {
         }
     }, [selectedRowValues, form]);
 
-    const handleSubmit = (values) => {
-        console.log("Form Values:", values);
-        onSubmit(values);
-    };
+    // const handleSubmit = (values) => {
+    //     console.log("Form Values:", values);
+    //     if (onSubmit) {
+    //       onSubmit(values);
+    //     } else {
+    //       console.error("onSubmit function is not defined!");
+    //     }
+    //   };
 
     return (
         <PageWrapper>
@@ -83,8 +89,8 @@ const UpdateForm = ({ data, onSubmit, selectedRowValues }) => {
                     labelCol={{ span: 11 }}
                     wrapperCol={{ span: 16 }}
                     layout="horizontal"
-                    // initialValues={{ fullName: selectedRowValues.name }}
-                    onFinish={handleSubmit}
+                    onFinish={(value)=>{handleEdit(value)}}
+                    disabled={componentDisabled}
                 >
                     <Form.Item
                         label="Full Name"

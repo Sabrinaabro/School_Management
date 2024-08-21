@@ -170,7 +170,6 @@ const Table = (props) => {
             address: value.address,
         });
     };
-
     const showModal = (values) => {
         setSelectedRowValues(values);
         setIsModalOpen(true);

@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './components/Login';
 import PreLoader from './components/PreLoader';
 import UpdateForm from './components/UpdateForm';
+import { supabase } from '../../backend/client';
 
 const App = () => {
   return (

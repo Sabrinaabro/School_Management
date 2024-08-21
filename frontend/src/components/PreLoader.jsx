@@ -4,7 +4,6 @@ import styled, { keyframes } from 'styled-components';
 import yourLogo from '/src/assets/eva.png'; 
 import backgroundImage from '/src/assets/bg.jpg'; 
 
-// Keyframe for blinking animation
 const blink = keyframes`
   0% {
     opacity: 1;
@@ -27,8 +26,6 @@ const LogoSpinner = styled.div`
   background-position: center;
   animation: ${blink} 1.5s linear infinite; /* Blinking animation */
 `;
-
-// Center container for the spinner with background
 const CenteredContainer = styled.div`
   display: flex;
   justify-content: center;
