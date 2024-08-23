@@ -3,14 +3,27 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 550px;  
+  width: calc(100% - 200px); 
   height: 100vh;
-  width: 100vw;  /* Ensures full width */
-  background-color: #B9D9EB;
-`;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
 
+@media (max-width: 768px) {
+  width: 100%;
+  margin-left: 0;
+  top: 0;
+  left: 0;
+  transform: none;
+  justify-content: flex-start;
+}
+`;
 
 const FormWrapper = styled.div`
   width: 100%;

@@ -1,47 +1,74 @@
 import React from 'react';
-import { Spin } from 'antd';
 import styled, { keyframes } from 'styled-components';
-import yourLogo from '/src/assets/eva.png'; 
-import backgroundImage from '/src/assets/bg.jpg'; 
 
 const blink = keyframes`
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.2;
-  }
-  100% {
-    opacity: 1;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 `;
 
-// Styled component for the logo with blinking animation
-const LogoSpinner = styled.div`
-  width: 200px; /* Adjust size as needed */
-  height: 200px; /* Adjust size as needed */
-  background-image: url(${yourLogo});
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  animation: ${blink} 1.5s linear infinite; /* Blinking animation */
+const bounce = keyframes`
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
 `;
-const CenteredContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const PreloaderWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100vh;
-  width: 100vw;
-  background: url(${backgroundImage}) no-repeat center center; /* Background image */
-  background-size: cover; /* Ensure the background covers the entire container */
-  position: relative;
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 9999;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/src/assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(15px);
+    z-index: -1;
+  }
 `;
 
-const PreLoader = () => (
-  <CenteredContainer>
-    <Spin indicator={<LogoSpinner />} size="large" />
-  </CenteredContainer>
-);
+const Logo = styled.img`
+  width: 120px;
+  height: 120px;
+  animation: ${blink} 2s infinite;
+`;
 
-export default PreLoader;
+const LoadingText = styled.div`
+  margin-top: 20px;
+  font-size: 24px;
+  animation: ${bounce} 2s infinite;
+  color: #313260;
+  font-size: 22px; 
+  font-weight: bold; 
+  font-family: 'Arial', sans-serif; 
+`;
+
+const Preloader = () => {
+  return (
+    <PreloaderWrapper>
+      <Logo src="/src/assets/evas.jpg" alt="Logo" />
+      <LoadingText>Eva's Academy</LoadingText>
+    </PreloaderWrapper>
+  );
+};
+
+export default Preloader;

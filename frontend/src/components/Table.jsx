@@ -14,7 +14,7 @@ const StyledBadgeRibbon = styled(Badge.Ribbon)`
         justify-content: center;
         text-align: center;
     }
-    position: relative;
+    position: static;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,22 +22,45 @@ const StyledBadgeRibbon = styled(Badge.Ribbon)`
 `;
 
 const StyledTable = styled(AntTable)`
+    .ant-table {
+        margin: 0 auto 0 100px; 
+        max-width: 100%; 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        overflow: hidden; 
+        
+    }
+
     .ant-table-thead > tr > th {
-        background-color: #ffe4e1;
-        color: #333;
-        font-weight: 600;
+        
+        background-color: #d2d7c1;
+        color: #313260;
+        font-weight: 900;
+        border-bottom: 2px solid #ddd;
+        font-size: 15px; 
+        font-weight: bold; 
+        font-family: 'Arial', sans-serif;
+        text-align: center;
+    
     }
 
     .ant-table-tbody > tr:nth-child(odd) {
-        background-color: #4ba1e7;
+        background: radial-gradient(circle, #D1ABAD, #D8C2C2);
+
+
     }
 
     .ant-table-tbody > tr:nth-child(even) {
-        background-color: #f4e04d;
+        background: radial-gradient(circle, #EECBAA, #FAE0C6);
     }
 
     .ant-table-cell {
         padding: 16px;
+        border-right: 1px solid #ddd; 
+    }
+
+    .ant-table-tbody > tr:last-child > td {
+        border-bottom: 1px solid #ddd;
     }
 `;
 
@@ -127,52 +150,44 @@ const Table = (props) => {
             title: "Action",
             key: "action",
             render: (text, record) => (
-                <span style={{ display: "flex", gap: "0.5rem", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                     <Popconfirm
                         title="Are you sure to delete this student?"
                         onConfirm={() => handleDelete(record.key)}
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button type="link" icon={<DeleteFilled style={{ color: "#BD1B0F" }} />} />
+                        <Button type="link" icon={<DeleteFilled
+                         style={{ color: "#BD1B0F", border:"none", background:"transparent" }} />} />
                     </Popconfirm>
                     <Button
                         icon={<EditFilled style={{ color: "green" }} />}
-                        onClick={() => showModal(record)}
-                        style={{ marginRight: 8 }}
+                        onClick={() => handleEdit(record)}
+                        style={{ marginRight: 8 , border: "none", background: "transparent"}}
                     />
                 </span>
             ),
         },
     ];
 
-    const onChange = (pagination, filters, sorter, extra) => {
-        console.log("params", pagination, filters, sorter, extra);
-    };
-
     const handleDelete = (key) => {
         console.log(`Deleting record with key: ${key}`);
         const newData = props.data.filter((item) => item.key !== key);
-        console.log("Updated data:", newData);
         props.setData(newData);
     };
 
-    const handleEdit = (value) => {
-        setSelectedRecord(value);
+    const handleEdit = (record) => {
+        setSelectedRowValues(record);
         setIsModalOpen(true);
         editForm.setFieldsValue({
-            fullName: value.name,
-            parentName: value.fname,
-            gender: value.gender,
-            dob: value.dob ? moment(value.dob, "YYYY-MM-DD") : null,
-            grade: value.classGrade,
-            contactNumber: value.contactNumber,
-            address: value.address,
+            fullName: record.name,
+            parentName: record.fname,
+            gender: record.gender,
+            dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
+            grade: record.classGrade,
+            contactNumber: record.contactNumber,
+            address: record.address,
         });
-    };
-    const showModal = (values) => {
-        setSelectedRowValues(values);
-        setIsModalOpen(true);
     };
 
     return (
