@@ -22,48 +22,37 @@ const StyledBadgeRibbon = styled(Badge.Ribbon)`
 `;
 
 const StyledTable = styled(AntTable)`
-    .ant-table {
-        margin: 0 auto 0 100px; 
-        max-width: 100%; 
-        border: 1px solid #ddd; 
-        border-radius: 8px; 
-        overflow: hidden; 
-        
-    }
+  .ant-table {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
 
-    .ant-table-thead > tr > th {
-        
-        background-color: #d2d7c1;
-        color: #313260;
-        font-weight: 900;
-        border-bottom: 2px solid #ddd;
-        font-size: 15px; 
-        font-weight: bold; 
-        font-family: 'Arial', sans-serif;
-        text-align: center;
-    
-    }
+  .ant-table-thead > tr > th {
+    background-color: #d2d7c1;
+    color: #313260;
+    font-weight: 900;
+    text-align: center;
+  }
 
-    .ant-table-tbody > tr:nth-child(odd) {
-        background: radial-gradient(circle, #D1ABAD, #D8C2C2);
+  .ant-table-tbody > tr:nth-child(odd) {
+    background: radial-gradient(circle, #D1ABAD, #D8C2C2);
+  }
 
+  .ant-table-tbody > tr:nth-child(even) {
+    background: radial-gradient(circle, #EECBAA, #FAE0C6);
+  }
 
-    }
+  .ant-table-cell {
+    padding: 16px;
+    border-right: 1px solid #ddd; 
+  }
 
-    .ant-table-tbody > tr:nth-child(even) {
-        background: radial-gradient(circle, #EECBAA, #FAE0C6);
-    }
-
-    .ant-table-cell {
-        padding: 16px;
-        border-right: 1px solid #ddd; 
-    }
-
-    .ant-table-tbody > tr:last-child > td {
-        border-bottom: 1px solid #ddd;
-    }
+  .ant-table-tbody > tr:last-child > td {
+    border-bottom: 1px solid #ddd;
+  }
 `;
-
 const generateFilters = (data, key) => {
     const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter((value) => value);
     return uniqueValues.map((value) => ({ text: value, value }));
@@ -192,7 +181,7 @@ const Table = (props) => {
 
     return (
         <>
-            <StyledTable columns={columns} dataSource={props.data} rowKey="key" />
+            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false}  />
             <Modal
                 title="Edit Student"
                 open={isModalOpen}

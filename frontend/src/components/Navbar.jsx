@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Avatar, Button, Layout, Menu, Typography } from 'antd';
+import { Link } from 'react-router-dom';
 import {
   UserOutlined,
   ContainerOutlined,
@@ -87,18 +88,13 @@ const Navbar = () => {
   const menuItems = [
     {
       key: '1',
-      icon: <PieChartOutlined />,
-      label: 'Dashboard',
+      icon: <DesktopOutlined />,
+      label: <Link to="/dashboard">Admin</Link>,
     },
     {
       key: '2',
-      icon: <DesktopOutlined />,
-      label: 'Admin',
-    },
-    {
-      key: '3',
       icon: <ContainerOutlined />,
-      label: 'Clerk',
+      label: <Link to="/clerk">Clerk</Link>,
     },
     {
       key: 'profile',

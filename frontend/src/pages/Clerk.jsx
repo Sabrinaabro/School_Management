@@ -10,112 +10,40 @@ import {
 import { EditFilled, DeleteFilled, PlusOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
-const StyledTable = styled(AntTable)`
-  .ant-table {
-    margin: 0 auto;
-    max-width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .ant-table-thead > tr > th {
-    background-color: #d2d7c1;
-    color: #313260;
-    font-weight: 900;
-    border-bottom: 2px solid #ddd;
-    font-size: 15px;
-    font-family: "Arial", sans-serif;
-    text-align: center;
-  }
-
-  .ant-table-tbody > tr:nth-child(odd) {
-    background: radial-gradient(circle, #d1abad, #d8c2c2);
-  }
-
-  .ant-table-tbody > tr:nth-child(even) {
-    background: radial-gradient(circle, #eecbaa, #fae0c6);
-  }
-
-  .ant-table-cell {
-    padding: 16px;
-    border-right: 1px solid #ddd;
-  }
-
-  .ant-table-tbody > tr:last-child > td {
-    border-bottom: 1px solid #ddd;
-  }
-`;
-
 
 const Container = styled.div`
-position: fixed;
-top: 0;
-left: 280px;  
-width: calc(100% - 200px); 
-height: 100vh;
-display: flex;
-flex-direction: column;
-align-items: flex-start; 
-justify-content: center;
-overflow: hidden;
-z-index: 1;
-transition: margin-left 0.3s ease;
+  position: absolute;
+  top: 60px;
+  left: 200px; 
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+  background-color: transparent;
+  overflow: auto;
 
-@media (max-width: 768px) {
-width: 100%;
-margin-left: 0;
-top: 0;
-left: 0;
-transform: none;
-justify-content: flex-start;
-}
+  @media (max-width: 768px) {
+    left: 0; 
+    padding: 10px;
+  }
 `;
+
 
 const HeaderContainer = styled.div`
   display: flex;
-  
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 0 20px; 
   margin-bottom: 20px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
 `;
 
 const HeaderTitle = styled.h2`
   margin: 0;
   font-size: 24px;
-  font-weight: 600;
   color: #313260;
-
-  @media (max-width: 768px) {
-    font-size: 20px;
-  }
-`;
-const FormWrapper = styled.div`
-  width: 100%;
-  max-width: 700px;
-  background: #b9d9eb;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  margin: 0 auto;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-  margin-right: 650px;
   gap: 10px;
-
-  @media (max-width: 768px) {
-    align-self: stretch;
-  }
 `;
 
 
@@ -127,11 +55,41 @@ const AddButton = styled(Button)`
   &:hover {
     background-color: #40a9ff;
   }
+`;
 
-  @media (max-width: 768px) {
+const StyledTable = styled(AntTable)`
+  .ant-table {
     width: 100%;
+    max-width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+
+  .ant-table-thead > tr > th {
+    background-color: #d2d7c1;
+    color: #313260;
+    font-weight: 900;
+    text-align: center;
+  }
+
+  .ant-table-tbody > tr:nth-child(odd) {
+    background: radial-gradient(circle, #D1ABAD, #D8C2C2);
+  }
+
+  .ant-table-tbody > tr:nth-child(even) {
+    background: radial-gradient(circle, #EECBAA, #FAE0C6);
+  }
+
+  .ant-table-cell {
+    padding: 16px;
+    border-right: 1px solid #ddd; 
+  }
+
+  .ant-table-tbody > tr:last-child > td {
+    border-bottom: 1px solid #ddd;
   }
 `;
+
 
 const Clerk = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -293,7 +251,7 @@ const Clerk = () => {
           </AddButton>
         </ButtonContainer>
       </HeaderContainer>
-      <StyledTable columns={columns} dataSource={data} rowKey="key" />
+      <StyledTable columns={columns} dataSource={data} rowKey="key" pagination={false} scroll={{ y:500 }} />
       <Modal
         title="Edit Record"
         open={isModalOpen}
@@ -337,7 +295,7 @@ const Clerk = () => {
 };
 
 const UpdateForm = ({ form }) => (
-  <FormWrapper form={form} layout="vertical">
+  <Form form={form} layout="vertical">
     <Form.Item
       name="fullName"
       label="Full Name"
@@ -369,7 +327,7 @@ const UpdateForm = ({ form }) => (
     >
       <Input placeholder="Enter address" />
     </Form.Item>
-  </FormWrapper>
+  </Form>
 );
 
 export default Clerk;

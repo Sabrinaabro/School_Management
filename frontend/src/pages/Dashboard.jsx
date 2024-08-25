@@ -77,26 +77,18 @@ const Dashboard = () => {
 };
 
 const Container = styled.div`
-position: fixed;
-  top: 0;
-  left: 150px;  
-  width: calc(100% - 200px); 
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; 
-  justify-content: center;
-  overflow: hidden;
-  z-index: 1;
-  transition: margin-left 0.3s ease;
+position: absolute;
+top: 60px;
+left: 200px; 
+right: 0;
+bottom: 0;
+padding: 20px;
+background-color: transparent;
+overflow: auto;
 
 @media (max-width: 768px) {
-  width: 100%;
-  margin-left: 0;
-  top: 0;
-  left: 0;
-  transform: none;
-  justify-content: flex-start;
+  left: 0; 
+  padding: 10px;
 }
 `;
 
@@ -105,7 +97,7 @@ display: flex;
 justify-content: space-between; 
 align-items: center; 
 width: 100%;
-padding:0 130px; 
+padding:0 10px; 
 margin-bottom: 20px;
 
 @media (max-width: 768px) {
