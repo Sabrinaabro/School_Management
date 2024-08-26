@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Table from "../components/Table";
 import styled from "styled-components";
 import { useState } from "react";
 import { Button, Modal, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import StudentForm from "../components/StudentForm";
-import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard = ({ session }) => {
+    const navigate = useNavigate();
+
+    // This will protect our route. User needs to be authenticated in order to access this route
+    // useEffect(() => {
+    //     if (!session) {
+    //         navigate("/login");
+    //     }
+    // }, [session]);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addForm] = Form.useForm();
     const [data, setData] = useState([
@@ -57,7 +66,6 @@ const Dashboard = () => {
 
     return (
         <>
-       
             <Container>
                 <HeaderContainer>
                     <HeaderTitle>Student List</HeaderTitle>
@@ -77,34 +85,34 @@ const Dashboard = () => {
 };
 
 const Container = styled.div`
-position: absolute;
-top: 60px;
-left: 200px; 
-right: 0;
-bottom: 0;
-padding: 20px;
-background-color: transparent;
-overflow: auto;
+    position: absolute;
+    top: 60px;
+    left: 200px;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    background-color: transparent;
+    overflow: auto;
 
-@media (max-width: 768px) {
-  left: 0; 
-  padding: 10px;
-}
+    @media (max-width: 768px) {
+        left: 0;
+        padding: 10px;
+    }
 `;
 
 const HeaderContainer = styled.div`
-display: flex;
-justify-content: space-between; 
-align-items: center; 
-width: 100%;
-padding:0 10px; 
-margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 10px;
+    margin-bottom: 20px;
 
-@media (max-width: 768px) {
-    flex-direction: column; 
-    align-items: flex-start; 
-    gap: 10px; 
-  }
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
 `;
 
 const HeaderTitle = styled.h2`
@@ -114,8 +122,8 @@ const HeaderTitle = styled.h2`
     color: #313260;
 
     @media (max-width: 768px) {
-        font-size: 20px; 
-      }
+        font-size: 20px;
+    }
 `;
 
 const ButtonContainer = styled.div`
@@ -124,8 +132,8 @@ const ButtonContainer = styled.div`
     gap: 10px;
 
     @media (max-width: 768px) {
-        align-self: stretch; 
-      }
+        align-self: stretch;
+    }
 `;
 
 const AddButton = styled(Button)`
@@ -139,7 +147,7 @@ const AddButton = styled(Button)`
 
     @media (max-width: 768px) {
         width: 100%;
-      }
+    }
 `;
 
 export default Dashboard;

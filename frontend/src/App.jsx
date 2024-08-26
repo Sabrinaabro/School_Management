@@ -1,43 +1,60 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
-import PreLoader from './components/PreLoader';
-import Clerk from './pages/Clerk';
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import PreLoader from "./components/PreLoader";
+import Users from "./pages/Users";
+import { createClient } from "@supabase/supabase-js";
+
+// creates a supabase client.
+const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
+    const [isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
+    const [session, setSession] = useState(null);
 
-  useEffect(() => {
-    
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2500); 
+    // This will read the session of a user.
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+        });
 
-    
-    return () => clearTimeout(timer);
-  }, []);
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+        });
 
-  if (isLoading) {
-    
-    return <PreLoader />;
-  }
+        return () => subscription.unsubscribe();
+    }, []);
 
-  return (
-    <>
-     {location.pathname !== '/login' && <Navbar />}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/clerk" element={<Clerk />} />
-        </Routes>
-      
-    </>
-  );
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+        // changed from 2500 to 1000 for a better UX.
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (isLoading) {
+        return <PreLoader />;
+    }
+
+    return (
+        <>
+            {location.pathname !== "/login" && <Navbar />}
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/dashboard" element={<Dashboard session={session} />} />
+                <Route path="/users" element={<Users />} />
+            </Routes>
+        </>
+    );
 }
 
 export default App;

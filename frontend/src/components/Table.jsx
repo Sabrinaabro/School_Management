@@ -1,57 +1,41 @@
 import React, { useState } from "react";
-import { Table as AntTable, Badge, Button, Popconfirm, Modal, Form } from "antd";
+import { Table as AntTable, Button, Popconfirm, Modal, Form } from "antd";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
 import styled from "styled-components";
 import UpdateForm from "./UpdateForm";
-
-const StyledBadgeRibbon = styled(Badge.Ribbon)`
-    .ant-badge-ribbon {
-        color: #fff;
-        font-weight: bold;
-        margin: 0 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-    position: static;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-`;
+import { TableBadge } from "./styled/Badge";
 
 const StyledTable = styled(AntTable)`
-  .ant-table {
-    width: 100%;
-    max-width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
+    .ant-table {
+        width: 100%;
+        max-width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
 
-  .ant-table-thead > tr > th {
-    background-color: #d2d7c1;
-    color: #313260;
-    font-weight: 900;
-    text-align: center;
-  }
+    .ant-table-thead > tr > th {
+        background-color: #d2d7c1;
+        color: #313260;
+        font-weight: 900;
+        text-align: center;
+    }
 
-  .ant-table-tbody > tr:nth-child(odd) {
-    background: radial-gradient(circle, #D1ABAD, #D8C2C2);
-  }
+    .ant-table-tbody > tr:nth-child(odd) {
+        background: radial-gradient(circle, #d1abad, #d8c2c2);
+    }
 
-  .ant-table-tbody > tr:nth-child(even) {
-    background: radial-gradient(circle, #EECBAA, #FAE0C6);
-  }
+    .ant-table-tbody > tr:nth-child(even) {
+        background: radial-gradient(circle, #eecbaa, #fae0c6);
+    }
 
-  .ant-table-cell {
-    padding: 16px;
-    border-right: 1px solid #ddd; 
-  }
+    .ant-table-cell {
+        padding: 16px;
+        border-right: 1px solid #ddd;
+    }
 
-  .ant-table-tbody > tr:last-child > td {
-    border-bottom: 1px solid #ddd;
-  }
+    .ant-table-tbody > tr:last-child > td {
+        border-bottom: 1px solid #ddd;
+    }
 `;
 const generateFilters = (data, key) => {
     const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter((value) => value);
@@ -129,10 +113,7 @@ const Table = (props) => {
             onFilter: (value, record) => record.fees === value,
             width: "10%",
             render: (fees) => (
-                <StyledBadgeRibbon
-                    text={fees === "Paid" ? "Paid" : "Unpaid"}
-                    color={fees === "Paid" ? "lime" : "volcano"}
-                />
+                <TableBadge text={fees === "Paid" ? "Paid" : "Unpaid"} color={fees === "Paid" ? "lime" : "volcano"} />
             ),
         },
         {
@@ -146,13 +127,17 @@ const Table = (props) => {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button type="link" icon={<DeleteFilled
-                         style={{ color: "#BD1B0F", border:"none", background:"transparent" }} />} />
+                        <Button
+                            type="link"
+                            icon={
+                                <DeleteFilled style={{ color: "#BD1B0F", border: "none", background: "transparent" }} />
+                            }
+                        />
                     </Popconfirm>
                     <Button
                         icon={<EditFilled style={{ color: "green" }} />}
                         onClick={() => handleEdit(record)}
-                        style={{ marginRight: 8 , border: "none", background: "transparent"}}
+                        style={{ marginRight: 8, border: "none", background: "transparent" }}
                     />
                 </span>
             ),
@@ -181,7 +166,7 @@ const Table = (props) => {
 
     return (
         <>
-            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false}  />
+            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false} />
             <Modal
                 title="Edit Student"
                 open={isModalOpen}

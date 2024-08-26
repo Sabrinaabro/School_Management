@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@ant-design/pro-components": "^2.7.15",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.45.2",
     "antd": "^5.20.1",
     "bootstrap": "^5.3.3",
     "dayjs": "^1.11.12",
