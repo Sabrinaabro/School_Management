@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Table as AntTable, Button, Popconfirm, Modal, Form } from "antd";
-import { EditFilled, DeleteFilled } from "@ant-design/icons";
+import { Table as AntTable, Button, Popconfirm, Modal, Form, Dropdown, Menu } from "antd";
+import { EditFilled, DeleteFilled, MoreOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import UpdateForm from "./UpdateForm";
 import { TableBadge } from "./styled/Badge";
+import Challan from "./Challan";
+
 
 const StyledTable = styled(AntTable)`
     .ant-table {
@@ -37,6 +39,7 @@ const StyledTable = styled(AntTable)`
         border-bottom: 1px solid #ddd;
     }
 `;
+
 const generateFilters = (data, key) => {
     const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter((value) => value);
     return uniqueValues.map((value) => ({ text: value, value }));
@@ -44,9 +47,56 @@ const generateFilters = (data, key) => {
 
 const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isChallanModalOpen, setIsChallanModalOpen] = useState(false);
     const [selectedRowValues, setSelectedRowValues] = useState({});
     const [form] = Form.useForm();
     const [editForm] = Form.useForm();
+
+    const handleDelete = (key) => {
+        console.log(`Deleting record with key: ${key}`);
+        const newData = props.data.filter((item) => item.key !== key);
+        props.setData(newData);
+    };
+
+    const handleEdit = (record) => {
+        setSelectedRowValues(record);
+        setIsModalOpen(true);
+        editForm.setFieldsValue({
+            fullName: record.name,
+            parentName: record.fname,
+            gender: record.gender,
+            dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
+            grade: record.classGrade,
+            contactNumber: record.contactNumber,
+            address: record.address,
+        });
+    };
+
+    const handleChallan = (record) => {
+        setSelectedRowValues(record);
+        setIsChallanModalOpen(true);
+    };
+
+    const menu = (record) => (
+        <Menu>
+            <Menu.Item key="1" onClick={() => handleEdit(record)}>
+                <EditFilled style={{ color: "green" }} /> Edit
+            </Menu.Item>
+            <Menu.Item key="2">
+                <Popconfirm
+                    title="Are you sure to delete this student?"
+                    onConfirm={() => handleDelete(record.key)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <DeleteFilled style={{ color: "#BD1B0F" }} /> Delete
+                </Popconfirm>
+            </Menu.Item>
+            <Menu.Item key="3" onClick={() => handleChallan(record)}>
+                Generate Challan
+            </Menu.Item>
+        </Menu>
+    );
 
     const columns = [
         {
@@ -120,49 +170,12 @@ const Table = (props) => {
             title: "Action",
             key: "action",
             render: (text, record) => (
-                <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                    <Popconfirm
-                        title="Are you sure to delete this student?"
-                        onConfirm={() => handleDelete(record.key)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button
-                            type="link"
-                            icon={
-                                <DeleteFilled style={{ color: "#BD1B0F", border: "none", background: "transparent" }} />
-                            }
-                        />
-                    </Popconfirm>
-                    <Button
-                        icon={<EditFilled style={{ color: "green" }} />}
-                        onClick={() => handleEdit(record)}
-                        style={{ marginRight: 8, border: "none", background: "transparent" }}
-                    />
-                </span>
+                <Dropdown overlay={menu(record)} trigger={['click']}>
+                    <Button type="link" icon={<MoreOutlined style={{ fontSize: '16px', color: '#000' }} />} />
+                </Dropdown>
             ),
         },
     ];
-
-    const handleDelete = (key) => {
-        console.log(`Deleting record with key: ${key}`);
-        const newData = props.data.filter((item) => item.key !== key);
-        props.setData(newData);
-    };
-
-    const handleEdit = (record) => {
-        setSelectedRowValues(record);
-        setIsModalOpen(true);
-        editForm.setFieldsValue({
-            fullName: record.name,
-            parentName: record.fname,
-            gender: record.gender,
-            dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
-            grade: record.classGrade,
-            contactNumber: record.contactNumber,
-            address: record.address,
-        });
-    };
 
     return (
         <>
@@ -176,6 +189,19 @@ const Table = (props) => {
                 footer={false}
             >
                 <UpdateForm handleEdit={handleEdit} form={editForm} selectedRowValues={selectedRowValues} />
+            </Modal>
+            <Modal
+                
+                open={isChallanModalOpen}
+                onCancel={() => setIsChallanModalOpen(false)}
+                footer={null}
+                header={false}
+                width={1200}
+              
+            >
+                <div id="challan-content">
+                    <Challan student={selectedRowValues} />
+                </div>
             </Modal>
         </>
     );

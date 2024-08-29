@@ -141,6 +141,7 @@ const Users = () => {
             email: record.email,
             contactNumber: record.contactNumber,
             address: record.address,
+            role: record.role,
         });
     };
 
