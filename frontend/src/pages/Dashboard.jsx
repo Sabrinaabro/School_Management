@@ -7,10 +7,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import StudentForm from "../components/StudentForm";
 import { useNavigate } from "react-router-dom";
 
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_PROJECT_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY
-  );
 
 const Dashboard = ({ session }) => {
     const navigate = useNavigate();
