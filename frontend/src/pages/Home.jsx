@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 
-
-
 // Styled Components
 const HomeContainer = styled.div`
     display: flex;
@@ -81,16 +79,6 @@ const StyledButton = styled(Button)`
 `;
 
 function Home() {
-  const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleButtonClick = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-            navigate("/login");
-        }, 1000); // Show PreLoader for 1 second before navigation
-    };
     return (
         <HomeContainer>
             <Banner>
@@ -100,7 +88,7 @@ function Home() {
                     <Motto>Excellence Our Commitment</Motto>
                 </LeftContent>
                 <RightContent>
-                    <StudentsImage src="/src/assets/b.png" alt="Students" />
+                    <StudentsImage src="/src/assets/school.png" alt="Students" />
                     <Cta>
                        <Link to="/login">
                        <StyledButton type="primary" size="large">
