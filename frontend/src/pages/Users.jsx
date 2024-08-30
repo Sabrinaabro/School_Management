@@ -255,15 +255,7 @@ const Users = () => {
         role: values.role,
       };
 
-      // Insert user details into the "users" table
-      const { error: insertError } = await supabase
-        .from("users")
-        .insert(newUser);
-
-      if (insertError) {
-        setIsLoading(false);
-        throw insertError;
-      }
+     
 
       setData([...data, { ...newUser, key: data.length + 1 }]);
       setIsLoading(false);

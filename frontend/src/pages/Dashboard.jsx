@@ -7,6 +7,11 @@ import { PlusOutlined } from "@ant-design/icons";
 import StudentForm from "../components/StudentForm";
 import { useNavigate } from "react-router-dom";
 
+const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_PROJECT_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY
+  );
+
 const Dashboard = ({ session }) => {
     const navigate = useNavigate();
 
@@ -20,45 +25,7 @@ const Dashboard = ({ session }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addForm] = Form.useForm();
     const [data, setData] = useState();
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            setIsLoading(true);
-            // Replace 'users' with your actual Supabase table or endpoint
-            const { data: fetchedData, error } = await supabaseAdmin
-              .from('users') // Assuming you're using a 'users' table
-              .select('*'); // Adjust columns as needed
-    
-            if (error) {
-              throw error;
-            }
-    
-            // Format data as needed for your table
-            const formattedData = fetchedData.map((user) => ({
-              name: user.user_metadata?.username || 'N/A',
-              email: user.email || 'N/A',
-              contactNumber: user.user_metadata?.contactNumber || 'N/A',
-              address: user.user_metadata?.address || 'N/A',
-              role: user.user_metadata?.role || 'N/A',
-            }));
-    
-            // Set the fetched data to state
-            setData(formattedData);
-            setIsLoading(false);
-          } catch (error) {
-            setIsLoading(false);
-            console.error('Error fetching data:', error.message);
-            // Optionally show an error notification
-            api.open({
-              message: "Error fetching data",
-              description: error.message,
-            });
-          }
-        };
-    
-        fetchData();
-      }, []);
-
+   
     const showModal = () => {
         setIsModalOpen(true);
     };
