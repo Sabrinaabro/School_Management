@@ -21,7 +21,7 @@ const ChallanContainer = styled.div`
   }
 
   width: 100%;
-  max-width: 1200px; /* Adjusted to accommodate all three copies */
+  max-width: 1200px; 
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ddd;

@@ -40,10 +40,12 @@ const StyledTable = styled(AntTable)`
     }
 `;
 
-const generateFilters = (data, key) => {
-    const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter((value) => value);
+const generateFilters = (data = [], key) => {
+    if (!Array.isArray(data) || !key) return []; // Early exit if data isn't an array or key is missing
+    const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter((value) => value !== undefined && value !== null);
     return uniqueValues.map((value) => ({ text: value, value }));
 };
+
 
 const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);

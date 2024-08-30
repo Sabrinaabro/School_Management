@@ -19,28 +19,45 @@ const Dashboard = ({ session }) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addForm] = Form.useForm();
-    const [data, setData] = useState([
-        {
-            name: "ABc",
-            fname: "dfds",
-            gender: "male",
-            dob: "2021-01-21",
-            classGrade: "Grade 1",
-            contactNumber: 564654654654,
-            address: "dfdsf df sdfsdf ",
-            fees: "Paid",
-        },
-        {
-            name: "ABcdfds fsdf",
-            fname: "dfds kjnkn kj ",
-            gender: "female",
-            dob: "2028-01-26",
-            classGrade: "Grade 1",
-            contactNumber: 66994654,
-            address: "dfdsf df sdfsdf ",
-            fees: "Unpaid",
-        },
-    ]);
+    const [data, setData] = useState();
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            setIsLoading(true);
+            // Replace 'users' with your actual Supabase table or endpoint
+            const { data: fetchedData, error } = await supabaseAdmin
+              .from('users') // Assuming you're using a 'users' table
+              .select('*'); // Adjust columns as needed
+    
+            if (error) {
+              throw error;
+            }
+    
+            // Format data as needed for your table
+            const formattedData = fetchedData.map((user) => ({
+              name: user.user_metadata?.username || 'N/A',
+              email: user.email || 'N/A',
+              contactNumber: user.user_metadata?.contactNumber || 'N/A',
+              address: user.user_metadata?.address || 'N/A',
+              role: user.user_metadata?.role || 'N/A',
+            }));
+    
+            // Set the fetched data to state
+            setData(formattedData);
+            setIsLoading(false);
+          } catch (error) {
+            setIsLoading(false);
+            console.error('Error fetching data:', error.message);
+            // Optionally show an error notification
+            api.open({
+              message: "Error fetching data",
+              description: error.message,
+            });
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     const showModal = () => {
         setIsModalOpen(true);

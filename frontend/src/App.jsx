@@ -47,7 +47,7 @@ function App() {
 
     return (
         <>
-            {location.pathname !== "/login" && <Navbar />}
+            {location.pathname !== "/login" && location.pathname !== "/" && <Navbar />}
 
             
             <Routes>
