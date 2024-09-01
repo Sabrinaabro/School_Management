@@ -5,7 +5,9 @@ import styled from "styled-components";
 import UpdateForm from "./UpdateForm";
 import { TableBadge } from "./styled/Badge";
 import Challan from "./Challan";
-
+import moment from "moment";
+import { createClient } from "@supabase/supabase-js";
+import { notification } from "antd";
 
 const StyledTable = styled(AntTable)`
     .ant-table {
@@ -40,78 +42,78 @@ const StyledTable = styled(AntTable)`
     }
 `;
 
+const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+
 const generateFilters = (data = [], key) => {
     if (!Array.isArray(data) || !key) return []; // Early exit if data isn't an array or key is missing
-    const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter((value) => value !== undefined && value !== null);
+    const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter(
+        (value) => value !== undefined && value !== null
+    );
     return uniqueValues.map((value) => ({ text: value, value }));
 };
-
 
 const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChallanModalOpen, setIsChallanModalOpen] = useState(false);
     const [selectedRowValues, setSelectedRowValues] = useState({});
     const [form] = Form.useForm();
+    const [api, contextHolder] = notification.useNotification();
     const [editForm] = Form.useForm();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleDelete = async (record) => {
         try {
-          const { error } = await supabase.from("students").delete().eq("id", record.key);
-          if (error) throw error;
-          setData(data.filter((item) => item.key !== record.key));
-          api.success({ message: "Record deleted successfully!" });
+            const { error } = await supabase.from("students").delete().eq("id", record.key);
+            if (error) throw error;
+            setData(data.filter((item) => item.key !== record.key));
+            api.success({ message: "Record deleted successfully!" });
         } catch (err) {
-          console.error("Error deleting record:", err.message);
-          api.error({ message: "Error deleting record", description: err.message });
+            console.error("Error deleting record:", err.message);
+            api.error({ message: "Error deleting record", description: err.message });
         }
-      };
+    };
 
-      const handleUpdate = async (record) => {
+    const handleUpdate = async (record) => {
+        console.log(selectedRowValues.key);
         try {
-      
-          setIsLoading(true);
-          const { error } = await supabase
-            .from('students')
-            .update({
-                name: record.name,
-                parent: record.fname,
-                gender: record.gender,
-                dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
-                grade: record.classGrade,
-                contact: record.contactNumber,
-                address: record.address,
-                gr_no: record.grNumber,
-            })
-            .eq('id', selectedRowValues.key);
-      
-          
+            setIsLoading(true);
+            const { error, data: dataStu } = await supabase
+                .from("students")
+                .update({
+                    name: record.fullName,
+                    parent: record.parentName,
+                    gender: record.gender,
+                    dob: record.dob,
+                    grade: record.grade,
+                    contact: record.contactNumber,
+                    address: record.address,
+                    gr_no: record.grNumber,
+                })
+                .eq("id", selectedRowValues.key);
+
+            console.log(dataStu, error);
+
             if (error) {
-              setIsLoading(false);
-              throw error;
+                setIsLoading(false);
+                throw error;
             }
-      25
-      
-          // Update frontend data
-          const updatedData = data.map((item) =>
-            item.key === selectedRowValues.key
-              ? { ...item, ...values, key: selectedRowValues.key }
-              : item
-          );
-          setData(updatedData);
-          setIsModalOpen(false);
-          editForm.resetFields();
-          
-          
-          api.success({ message: 'Record updated successfully!' });
+
+            // Update frontend data
+            const updatedData = props.data.map((item) =>
+                item.key === selectedRowValues.key ? { ...item, ...record, key: selectedRowValues.key } : item
+            );
+            props.setData(updatedData);
+            setIsModalOpen(false);
+
+            api.success({ message: "Record updated successfully!" });
         } catch (err) {
-          
-          console.error('Error updating record:', err.message);
-          api.error({
-            message: 'Error updating record',
-            description: err.message,
-          });
+            console.error("Error updating record:", err.message);
+            api.error({
+                message: "Error updating record",
+                description: err.message,
+            });
         }
-      };
+    };
 
     const handleEdit = (record) => {
         setSelectedRowValues(record);
@@ -234,8 +236,8 @@ const Table = (props) => {
             title: "Action",
             key: "action",
             render: (text, record) => (
-                <Dropdown overlay={menu(record)} trigger={['click']}>
-                    <Button type="link" icon={<MoreOutlined style={{ fontSize: '16px', color: '#000' }} />} />
+                <Dropdown overlay={menu(record)} trigger={["click"]}>
+                    <Button type="link" icon={<MoreOutlined style={{ fontSize: "16px", color: "#000" }} />} />
                 </Dropdown>
             ),
         },
@@ -251,23 +253,21 @@ const Table = (props) => {
                 cancelText="Cancel"
                 onCancel={() => setIsModalOpen(false)}
                 footer={false}
-                onOk={() => {
-                    editForm
-                      .validateFields()
-                      .then((values) => handleUpdate(values))
-                      .catch((info) => console.error("Validate Failed:", info));
-                  }}
+                // onOk={() => {
+                //     editForm
+                //         .validateFields()
+                //         .then((values) => handleUpdate(values))
+                //         .catch((info) => console.error("Validate Failed:", info));
+                // }}
             >
-                <UpdateForm handleEdit={handleEdit} form={editForm} selectedRowValues={selectedRowValues} />
+                <UpdateForm handleEdit={handleUpdate} form={editForm} selectedRowValues={selectedRowValues} />
             </Modal>
             <Modal
-                
                 open={isChallanModalOpen}
                 onCancel={() => setIsChallanModalOpen(false)}
                 footer={null}
                 header={false}
                 width={1200}
-              
             >
                 <div id="challan-content">
                     <Challan student={selectedRowValues} />

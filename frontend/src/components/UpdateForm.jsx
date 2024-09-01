@@ -44,8 +44,7 @@ const SubmitButton = styled(Button)`
     }
 `;
 
-const UpdateForm = ({  selectedRowValues },props) => {
-    const [form] = Form.useForm();
+const UpdateForm = ({ selectedRowValues, editForm, handleEdit }) => {
     const [componentDisabled, setComponentDisabled] = useState(false);
 
     // useEffect(() => {
@@ -54,19 +53,19 @@ const UpdateForm = ({  selectedRowValues },props) => {
 
     console.log(selectedRowValues);
 
-    useEffect(() => {
-        if (selectedRowValues) {
-            form.setFieldsValue({
-                fullName: selectedRowValues.name,
-                gender: selectedRowValues.gender,
-                dob: selectedRowValues.dob ? dayjs(selectedRowValues.dob) : null,
-                grade: selectedRowValues.classGrade,
-                parentName: selectedRowValues.fname,
-                contactNumber: selectedRowValues.contactNumber,
-                address: selectedRowValues.address,
-            });
-        }
-    }, [selectedRowValues, form]);
+    // useEffect(() => {
+    //     if (selectedRowValues) {
+    //         editForm.setFieldsValue({
+    //             fullName: selectedRowValues.name,
+    //             gender: selectedRowValues.gender,
+    //             dob: selectedRowValues.dob ? dayjs(selectedRowValues.dob) : null,
+    //             grade: selectedRowValues.classGrade,
+    //             parentName: selectedRowValues.fname,
+    //             contactNumber: selectedRowValues.contactNumber,
+    //             address: selectedRowValues.address,
+    //         });
+    //     }
+    // }, [selectedRowValues, editForm]);
 
     // const handleSubmit = (values) => {
     //     console.log("Form Values:", values);
@@ -85,11 +84,13 @@ const UpdateForm = ({  selectedRowValues },props) => {
                 </Title>
 
                 <Form
-                    form={form}
+                    form={editForm}
                     labelCol={{ span: 11 }}
                     wrapperCol={{ span: 16 }}
                     layout="horizontal"
-                    onFinish={(value)=>{handleEdit(value)}}
+                    onFinish={(value) => {
+                        handleEdit(value);
+                    }}
                     disabled={componentDisabled}
                 >
                     <Form.Item

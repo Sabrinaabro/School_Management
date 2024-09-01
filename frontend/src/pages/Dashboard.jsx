@@ -8,14 +8,9 @@ import StudentForm from "../components/StudentForm";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { notification } from "antd";
-import moment from 'moment';
+import moment from "moment";
 
-
-
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_PROJECT_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY
-  );
+const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 const Dashboard = ({ session }) => {
     const navigate = useNavigate();
@@ -35,80 +30,81 @@ const Dashboard = ({ session }) => {
 
     useEffect(() => {
         fetchData();
-      }, []);
-    
-      // Function to fetch data from Supabase
-      const fetchData = async () => {
+    }, []);
+
+    // Function to fetch data from Supabase
+    const fetchData = async () => {
         try {
-          const { data, error } = await supabase.from("students").select("*");
-          if (error) throw error;
-          setData(
-            data.map((item) => ({
-              key: item.id,
-              name: item.username,
-              email: item.email,
-              contactNumber: item.contact_number,
-              address: item.address,
-              role: item.role,
-            }))
-          );
+            const { data, error } = await supabase.from("students").select("*");
+            console.log({ data });
+            if (error) throw error;
+            setData(
+                data.map((item) => ({
+                    key: item.id,
+                    name: item.name,
+                    parent: item.parent,
+                    gender: item.gender,
+                    dob: item.dob,
+                    grade: item.grade,
+                    contact: item.contact,
+                    address: item.address,
+                    gr_no: item.gr_no,
+                }))
+            );
         } catch (err) {
-          console.error("Error fetching data:", err.message);
+            console.error("Error fetching data:", err.message);
         }
-      };
-   
+    };
+
     const showModal = () => {
         setIsModalOpen(true);
     };
-      
-        // Function to handle adding a new user
-        const handleAdd = async (record) => {
-          try {
+
+    // Function to handle adding a new user
+    const handleAdd = async (record) => {
+        try {
             setIsLoading(true);
-            const { data, error } = await supabase.auth.admin.createUser({
-                name: record.name,
-                parent: record.fname,
+            const { data, error } = await supabase.from("students").insert({
+                name: record.fullName,
+                parent: record.parentName,
                 gender: record.gender,
-                dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
-                grade: record.classGrade,
+                dob: record.dob,
+                grade: record.grade,
                 contact: record.contactNumber,
                 address: record.address,
                 gr_no: record.grNumber,
-              
             });
-      
+
             if (error) {
-              setIsLoading(false);
-              throw error;
+                setIsLoading(false);
+                throw error;
             }
-      
+
             const newStudent = {
-                name: record.name,
-                parent: record.fname,
+                name: record.fullName,
+                parent: record.parentName,
                 gender: record.gender,
-                dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
-                grade: record.classGrade,
+                dob: record.dob,
+                grade: record.grade,
                 contact: record.contactNumber,
                 address: record.address,
                 gr_no: record.grNumber,
             };
-      
-           
-      
+
             setData([...data, { ...newStudent, key: data.length + 1 }]);
             setIsLoading(false);
             setIsModalOpen(false);
             addForm.resetFields();
             api.success({ message: "Student added successfully!" });
-          } catch (err) {
+        } catch (err) {
             console.error("Error adding student:", err.message);
             setIsLoading(false);
             api.error({
-              message: "Error adding student",
-              description: err.message,
+                message: "Error adding student",
+                description: err.message,
             });
-          }
-        };
+        }
+    };
 
     return (
         <>
