@@ -127,6 +127,14 @@ const StudentForm = (props) => {
                     </Form.Item>
 
                     <Form.Item
+                        label="Gr Number"
+                        name="grNumber"
+                        rules={[{ required: true, message: "Please enter the gr number" }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
                         label="Address"
                         name="address"
                         rules={[{ required: true, message: "Please enter the address" }]}

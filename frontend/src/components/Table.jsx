@@ -54,11 +54,64 @@ const Table = (props) => {
     const [form] = Form.useForm();
     const [editForm] = Form.useForm();
 
-    const handleDelete = (key) => {
-        console.log(`Deleting record with key: ${key}`);
-        const newData = props.data.filter((item) => item.key !== key);
-        props.setData(newData);
-    };
+    const handleDelete = async (record) => {
+        try {
+          const { error } = await supabase.from("students").delete().eq("id", record.key);
+          if (error) throw error;
+          setData(data.filter((item) => item.key !== record.key));
+          api.success({ message: "Record deleted successfully!" });
+        } catch (err) {
+          console.error("Error deleting record:", err.message);
+          api.error({ message: "Error deleting record", description: err.message });
+        }
+      };
+
+      const handleUpdate = async (record) => {
+        try {
+      
+          setIsLoading(true);
+          const { error } = await supabase
+            .from('students')
+            .update({
+                name: record.name,
+                parent: record.fname,
+                gender: record.gender,
+                dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
+                grade: record.classGrade,
+                contact: record.contactNumber,
+                address: record.address,
+                gr_no: record.grNumber,
+            })
+            .eq('id', selectedRowValues.key);
+      
+          
+            if (error) {
+              setIsLoading(false);
+              throw error;
+            }
+      25
+      
+          // Update frontend data
+          const updatedData = data.map((item) =>
+            item.key === selectedRowValues.key
+              ? { ...item, ...values, key: selectedRowValues.key }
+              : item
+          );
+          setData(updatedData);
+          setIsModalOpen(false);
+          editForm.resetFields();
+          
+          
+          api.success({ message: 'Record updated successfully!' });
+        } catch (err) {
+          
+          console.error('Error updating record:', err.message);
+          api.error({
+            message: 'Error updating record',
+            description: err.message,
+          });
+        }
+      };
 
     const handleEdit = (record) => {
         setSelectedRowValues(record);
@@ -71,6 +124,7 @@ const Table = (props) => {
             grade: record.classGrade,
             contactNumber: record.contactNumber,
             address: record.address,
+            grNumber: record.grNumber,
         });
     };
 
@@ -158,6 +212,14 @@ const Table = (props) => {
             width: "25%",
         },
         {
+            title: "Gr#",
+            dataIndex: "grNumber",
+            filters: generateFilters(props.data, "grNumber"),
+            filterSearch: true,
+            onFilter: (value, record) => record.grNumber.includes(value),
+            width: "25%",
+        },
+        {
             title: "Status",
             dataIndex: "fees",
             filters: generateFilters(props.data, "fees"),
@@ -189,6 +251,12 @@ const Table = (props) => {
                 cancelText="Cancel"
                 onCancel={() => setIsModalOpen(false)}
                 footer={false}
+                onOk={() => {
+                    editForm
+                      .validateFields()
+                      .then((values) => handleUpdate(values))
+                      .catch((info) => console.error("Validate Failed:", info));
+                  }}
             >
                 <UpdateForm handleEdit={handleEdit} form={editForm} selectedRowValues={selectedRowValues} />
             </Modal>
