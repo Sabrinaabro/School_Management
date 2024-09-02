@@ -176,7 +176,7 @@ const Table = (props) => {
             filterSearch: true,
             onFilter: (value, record) => record.parent.includes(value),
             sorter: (a, b) => a.parent.localeCompare(b.parent),
-            width: "14%",
+            width: "16%",
         },
         {
             title: "Gender",
@@ -203,7 +203,7 @@ const Table = (props) => {
         {
             title: "Contact Number",
             dataIndex: "contact",
-            width: "10%",
+            width: "15%",
         },
         {
             title: "Address",
@@ -216,7 +216,7 @@ const Table = (props) => {
         {
             title: "Gr#",
             dataIndex: "gr_no",
-            width: "25%",
+            width: "15%",
         },
         // {
         //     title: "Status",
