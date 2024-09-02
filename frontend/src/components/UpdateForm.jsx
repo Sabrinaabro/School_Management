@@ -1,8 +1,7 @@
-import React, { Component, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, DatePicker, Form, Input, Radio, Select, Typography } from "antd";
 import styled from "styled-components";
 import dayjs from "dayjs";
-import { useState } from "react";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -44,37 +43,24 @@ const SubmitButton = styled(Button)`
     }
 `;
 
-const UpdateForm = ({ selectedRowValues, editForm, handleEdit }) => {
+const UpdateForm = ({ selectedRowValues, handleEdit }) => {
+    const [editForm] = Form.useForm();
     const [componentDisabled, setComponentDisabled] = useState(false);
 
-    // useEffect(() => {
-    //     form.setFieldsValue(data);
-    // }, [data, form]);
-
-    console.log(selectedRowValues);
-
-    // useEffect(() => {
-    //     if (selectedRowValues) {
-    //         editForm.setFieldsValue({
-    //             fullName: selectedRowValues.name,
-    //             gender: selectedRowValues.gender,
-    //             dob: selectedRowValues.dob ? dayjs(selectedRowValues.dob) : null,
-    //             grade: selectedRowValues.classGrade,
-    //             parentName: selectedRowValues.fname,
-    //             contactNumber: selectedRowValues.contactNumber,
-    //             address: selectedRowValues.address,
-    //         });
-    //     }
-    // }, [selectedRowValues, editForm]);
-
-    // const handleSubmit = (values) => {
-    //     console.log("Form Values:", values);
-    //     if (onSubmit) {
-    //       onSubmit(values);
-    //     } else {
-    //       console.error("onSubmit function is not defined!");
-    //     }
-    //   };
+    useEffect(() => {
+        if (selectedRowValues && editForm) {
+            editForm.setFieldsValue({
+                name: selectedRowValues.name,
+                gender: selectedRowValues.gender,
+                dob: selectedRowValues.dob ? dayjs(selectedRowValues.dob) : null,
+                grade: selectedRowValues.grade,
+                parent: selectedRowValues.parent,
+                contact: selectedRowValues.contact,
+                address: selectedRowValues.address,
+                gr_no: selectedRowValues.gr_no,
+            });
+        }
+    }, [selectedRowValues, editForm]);
 
     return (
         <PageWrapper>
@@ -88,14 +74,12 @@ const UpdateForm = ({ selectedRowValues, editForm, handleEdit }) => {
                     labelCol={{ span: 11 }}
                     wrapperCol={{ span: 16 }}
                     layout="horizontal"
-                    onFinish={(value) => {
-                        handleEdit(value);
-                    }}
+                    onFinish={handleEdit}
                     disabled={componentDisabled}
                 >
                     <Form.Item
                         label="Full Name"
-                        name="fullName"
+                        name="name"
                         rules={[{ required: true, message: "Please enter the student's full name" }]}
                     >
                         <Input />
@@ -144,7 +128,7 @@ const UpdateForm = ({ selectedRowValues, editForm, handleEdit }) => {
 
                     <Form.Item
                         label="Parent/Guardian Name"
-                        name="parentName"
+                        name="parent"
                         rules={[{ required: true, message: "Please enter the parent/guardian's name" }]}
                     >
                         <Input />
@@ -152,7 +136,7 @@ const UpdateForm = ({ selectedRowValues, editForm, handleEdit }) => {
 
                     <Form.Item
                         label="Contact Number"
-                        name="contactNumber"
+                        name="contact"
                         rules={[{ required: true, message: "Please enter the contact number" }]}
                     >
                         <Input />
@@ -164,6 +148,14 @@ const UpdateForm = ({ selectedRowValues, editForm, handleEdit }) => {
                         rules={[{ required: true, message: "Please enter the address" }]}
                     >
                         <TextArea rows={4} />
+                    </Form.Item>
+                    
+                    <Form.Item
+                        label="GR Number"
+                        name="gr_no"
+                        rules={[{ required: true, message: "Please enter the GR number" }]}
+                    >
+                        <Input />
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 6, span: 18 }}>

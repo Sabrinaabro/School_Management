@@ -39,18 +39,19 @@ const Dashboard = ({ session }) => {
             console.log({ data });
             if (error) throw error;
             setData(
-                data.map((item) => ({
-                    key: item.id,
-                    name: item.name,
-                    parent: item.parent,
-                    gender: item.gender,
-                    dob: item.dob,
-                    grade: item.grade,
-                    contact: item.contact,
-                    address: item.address,
-                    gr_no: item.gr_no,
-                }))
-            );
+              data.map((item) => ({
+                  key: item.id,
+                  name: item.name,
+                  parent: item.parent,
+                  gender: item.gender,
+                  dob: item.dob,
+                  grade: item.grade,
+                  contact: item.contact,
+                  address: item.address,
+                  gr_no: item.gr_no,
+              }))
+          );
+          
         } catch (err) {
             console.error("Error fetching data:", err.message);
         }

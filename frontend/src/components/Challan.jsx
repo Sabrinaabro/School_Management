@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { Row, Col, Button } from "antd";
 import logo from "/src/assets/evas.jpg";
@@ -46,14 +46,31 @@ const ChallanContainer = styled.div`
       align-items: center;
       justify-content: center;
       margin-bottom: 10px;
+      position: relative;
+
+      .ubl-logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 100px;
+      }
 
       .ubl-logo {
         height: 40px;
-        margin-right: 10px;
+      }
+
+      .bank-name {
+        font-family: 'Agrandir Regular';
+        font-size: 11px; 
+        font-weight: bold;
+        margin-top: 5px; 
+        text-align: center;
+        white-space: normal; 
+        line-height: 1.2; 
       }
 
       .school-logo {
-        height: 40px;
+        height: 55px;
         margin-left: 70px;
       }
     }
@@ -65,29 +82,19 @@ const ChallanContainer = styled.div`
       color: #313260;
     }
 
-    .bank-name {
-      font-family: 'Agrandir Regular';
-      font-size: 11px; 
-      font-weight: bold;
-      margin-bottom: 5px;
-      margin-left: 45px;
-      text-align: center;
-      white-space: normal; 
-      line-height: 1.2; 
-    }
-
     p {
       margin: 0;
       font-family: 'Active Heart'; 
-      font-weight: bold;
+      font-weight: regular;
       font-size: 12px;
-      text-align: left;
+      text-align: center;
+      margin-bottom: 25px;
     }
   }
 
   .challan-details {
     text-align: left;
-    margin-top: 10px;
+    margin-top: 20px;
 
     p {
       font-family: 'Proxima Nova Regular';
@@ -126,90 +133,109 @@ const ChallanContainer = styled.div`
 `;
 
 const Challan = ({ student = {} }) => {
-  const { name, fname, classGrade, grNumber } = student;
+  const challanRef = useRef(null);
+  const { name, parent, grade, gr_no } = student;
+
+  const printChallan = () => {
+    const printContents = challanRef.current.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload(); // To refresh the page and restore original content
+  };
 
   return (
-    <ChallanContainer>
-      <Row gutter={16}>
-        {["Bank Copy", "School Copy", "Student Copy"].map((copy, index) => (
-          <Col span={8} key={index}>
-            <div className="header">
-              <div className="logo-container">
-                <img src={ublLogo} alt="UBL Logo" className="ubl-logo" />
-                <div className="bank-name">
-                  <span>BANK</span><br />
-                  <span>CHALLAN</span>
+    <div ref={challanRef}>
+      <ChallanContainer>
+        <Row gutter={16}>
+          {["Bank Copy", "School Copy", "Student Copy"].map((copy, index) => (
+            <Col span={8} key={index}>
+              <div className="header">
+                <div className="logo-container">
+                  <div className="ubl-logo-container">
+                    <img src={ublLogo} alt="UBL Logo" className="ubl-logo" />
+                    <div className="bank-name">
+                      <span>PV NO.</span>
+                    </div>
+                  </div>
+                  <img src={logo} alt="School Logo" className="school-logo" />
                 </div>
-                <img src={logo} alt="School Logo" className="school-logo" />
+                <div className="school-name">
+                  <span>EVA'S ACADEMY,</span><br />
+                  <span>HYDERABAD</span>
+                </div>
+                <p>UBL A/C NO. 314359562</p>
               </div>
-              <div className="school-name">
-                <span>EVA'S ACADEMY,</span><br />
-                <span>HYDERABAD</span>
+              <div className="challan-details">
+                <p><strong>Name:</strong> {name}</p>
+                <p><strong>Father's Name:</strong> {parent}</p>
+                <p><strong>Grade:</strong> {grade}</p>
+                <p><strong>GR No:</strong> {gr_no}</p>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>PARTICULARS</th>
+                      <th>AMOUNT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1. Tuition Fee:</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>2. Net Payment (Before Due Date):</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>3. Net Payment (After Due Date):</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Arrears:</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Total Amount (PKR):</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Late Fee After Due Date:</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Total Amount After Late Fee:</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td style={{ border: 'none' }}>Amount in Words:</td>
+                      <td style={{ border: 'none' }}></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <p>A/C NO.</p>
-            </div>
-            <div className="challan-details">
-              <p><strong>Name:</strong> {name}</p>
-              <p><strong>Father's Name:</strong> {fname}</p>
-              <p><strong>Grade:</strong> {classGrade}</p>
-              <p><strong>Gr Number:</strong> {grNumber}</p>
-              <table>
-                <thead>
-                  <tr>
-                    <th>PARTICULARS</th>
-                    <th>AMOUNT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1. Tuition Fee:</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>2. Late Fee:</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>3. Net Payment (Before Due Date):</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>4. Net Payment (After Due Date):</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td style={{ textAlign: 'right', paddingRight: '10px' }}>Arrears:</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td style={{ textAlign: 'right', paddingRight: '10px' }}>Total Amount (PKR):</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td style={{ border: 'none' }}>Amount in Words:</td>
-                    <td style={{ border: 'none' }}></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="footer">
-              <div>Issue Date: __________</div>
-              <div>Due Date: __________</div>
-            </div>
-            <div className="footer">
-              <div>School Accountant</div>
-              <div>Bank Stamp</div>
-            </div>
-            <div style={{ marginTop: "20px", textAlign: "center" }}>
-              {copy}
-            </div>
-          </Col>
-        ))}
-      </Row>
-      <Button type="primary" onClick={() => window.print()} className="no-print">
-        Print Challan
-      </Button>
-    </ChallanContainer>
+              <div className="footer">
+                <div>Issue Date: __________</div>
+                <div>Due Date: __________</div>
+                <div>Expiry Date: __________</div>
+              </div>
+              <div className="footer">
+                <div>School Accountant</div>
+                <div>Bank Stamp</div>
+              </div>
+              <div style={{ marginTop: "20px", textAlign: "center" }}>
+                {copy}
+              </div>
+            </Col>
+          ))}
+        </Row>
+        <Button type="primary" onClick={printChallan} className="no-print">
+          Print Challan
+        </Button>
+      </ChallanContainer>
+    </div>
   );
 };
 

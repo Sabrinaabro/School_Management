@@ -44,9 +44,9 @@ const StyledTable = styled(AntTable)`
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
-const generateFilters = (data = [], key) => {
-    if (!Array.isArray(data) || !key) return []; // Early exit if data isn't an array or key is missing
-    const uniqueValues = Array.from(new Set(data.map((item) => item[key]))).filter(
+const generateFilters = (data = [], id) => {
+    if (!Array.isArray(data) || !id) return []; // Early exit if data isn't an array or key is missing
+    const uniqueValues = Array.from(new Set(data.map((item) => item[id]))).filter(
         (value) => value !== undefined && value !== null
     );
     return uniqueValues.map((value) => ({ text: value, value }));
@@ -56,16 +56,16 @@ const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChallanModalOpen, setIsChallanModalOpen] = useState(false);
     const [selectedRowValues, setSelectedRowValues] = useState({});
-    const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
     const [editForm] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleDelete = async (record) => {
+        console.log(record);
         try {
-            const { error } = await supabase.from("students").delete().eq("id", record.key);
+            const { error } = await supabase.from("students").delete().eq("id", record.id);
             if (error) throw error;
-            setData(data.filter((item) => item.key !== record.key));
+            setData(data.filter((item) => item.id !== record.id));
             api.success({ message: "Record deleted successfully!" });
         } catch (err) {
             console.error("Error deleting record:", err.message);
@@ -74,22 +74,22 @@ const Table = (props) => {
     };
 
     const handleUpdate = async (record) => {
-        console.log(selectedRowValues.key);
+        console.log(selectedRowValues.id);
         try {
             setIsLoading(true);
             const { error, data: dataStu } = await supabase
                 .from("students")
-                .update({
-                    name: record.fullName,
-                    parent: record.parentName,
-                    gender: record.gender,
-                    dob: record.dob,
-                    grade: record.grade,
-                    contact: record.contactNumber,
-                    address: record.address,
-                    gr_no: record.grNumber,
+                .update({  
+            name: record.name,  
+            parent: record.parent,  
+            gender: record.gender,  
+            dob: record.dob,  
+            grade: record.grade, 
+            contact: record.contact, 
+            address: record.address,    
+            gr_no: record.gr_no,
                 })
-                .eq("id", selectedRowValues.key);
+                .eq("id", selectedRowValues.id);
 
             console.log(dataStu, error);
 
@@ -100,7 +100,7 @@ const Table = (props) => {
 
             // Update frontend data
             const updatedData = props.data.map((item) =>
-                item.key === selectedRowValues.key ? { ...item, ...record, key: selectedRowValues.key } : item
+                item.id === selectedRowValues.id ? { ...item, ...record, id: selectedRowValues.id } : item
             );
             props.setData(updatedData);
             setIsModalOpen(false);
@@ -116,17 +116,19 @@ const Table = (props) => {
     };
 
     const handleEdit = (record) => {
+        console.log("Editing record:", record);  // Log the record to confirm data
         setSelectedRowValues(record);
         setIsModalOpen(true);
         editForm.setFieldsValue({
-            fullName: record.name,
-            parentName: record.fname,
+            id: record.key,  // Ensure this matches the field names in the form
+            name: record.name,
+            parent: record.parent,
             gender: record.gender,
-            dob: record.dob ? moment(record.dob, "YYYY-MM-DD") : null,
-            grade: record.classGrade,
-            contactNumber: record.contactNumber,
+            dob: record.dob,
+            grade: record.grade,
+            contact: record.contact,
             address: record.address,
-            grNumber: record.grNumber,
+            gr_no: record.gr_no,
         });
     };
 
@@ -143,7 +145,7 @@ const Table = (props) => {
             <Menu.Item key="2">
                 <Popconfirm
                     title="Are you sure to delete this student?"
-                    onConfirm={() => handleDelete(record.key)}
+                    onConfirm={() => handleDelete(record.id)}
                     okText="Yes"
                     cancelText="No"
                 >
@@ -164,16 +166,17 @@ const Table = (props) => {
             filterSearch: true,
             onFilter: (value, record) => record.name.includes(value),
             sorter: (a, b) => a.name.localeCompare(b.name),
-            width: "15%",
+            width: "10%",
         },
         {
             title: "Guardian Name",
-            dataIndex: "fname",
-            filters: generateFilters(props.data, "fname"),
+            dataIndex: "parent",
+           
+            filters: generateFilters(props.data, "parent"),
             filterSearch: true,
-            onFilter: (value, record) => record.fname.includes(value),
-            sorter: (a, b) => a.fname.localeCompare(b.fname),
-            width: "20%",
+            onFilter: (value, record) => record.parent.includes(value),
+            sorter: (a, b) => a.parent.localeCompare(b.parent),
+            width: "14%",
         },
         {
             title: "Gender",
@@ -187,23 +190,20 @@ const Table = (props) => {
             title: "Date of Birth",
             dataIndex: "dob",
             sorter: (a, b) => new Date(a.dob) - new Date(b.dob),
-            width: "15%",
+            width: "12%",
         },
         {
             title: "Grade",
-            dataIndex: "classGrade",
-            filters: generateFilters(props.data, "classGrade"),
+            dataIndex: "grade",
+            filters: generateFilters(props.data, "grade"),
             filterSearch: true,
-            onFilter: (value, record) => record.classGrade === value,
+            onFilter: (value, record) => record.grade === value,
             width: "10%",
         },
         {
             title: "Contact Number",
-            dataIndex: "contactNumber",
-            filters: generateFilters(props.data, "contactNumber"),
-            filterSearch: true,
-            onFilter: (value, record) => record.contactNumber.includes(value),
-            width: "20%",
+            dataIndex: "contact",
+            width: "10%",
         },
         {
             title: "Address",
@@ -215,23 +215,20 @@ const Table = (props) => {
         },
         {
             title: "Gr#",
-            dataIndex: "grNumber",
-            filters: generateFilters(props.data, "grNumber"),
-            filterSearch: true,
-            onFilter: (value, record) => record.grNumber.includes(value),
+            dataIndex: "gr_no",
             width: "25%",
         },
-        {
-            title: "Status",
-            dataIndex: "fees",
-            filters: generateFilters(props.data, "fees"),
-            filterSearch: true,
-            onFilter: (value, record) => record.fees === value,
-            width: "10%",
-            render: (fees) => (
-                <TableBadge text={fees === "Paid" ? "Paid" : "Unpaid"} color={fees === "Paid" ? "lime" : "volcano"} />
-            ),
-        },
+        // {
+        //     title: "Status",
+        //     dataIndex: "fees",
+        //     filters: generateFilters(props.data, "fees"),
+        //     filterSearch: true,
+        //     onFilter: (value, record) => record.fees === value,
+        //     width: "10%",
+        //     render: (fees) => (
+        //         <TableBadge text={fees === "Paid" ? "Paid" : "Unpaid"} color={fees === "Paid" ? "lime" : "volcano"} />
+        //     ),
+        // },
         {
             title: "Action",
             key: "action",
@@ -245,7 +242,7 @@ const Table = (props) => {
 
     return (
         <>
-            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false} />
+            <StyledTable columns={columns} dataSource={props.data} rowKey="id" pagination={false} />
             <Modal
                 title="Edit Student"
                 open={isModalOpen}
