@@ -74,24 +74,24 @@ const Table = (props) => {
     };
 
     const handleUpdate = async (record) => {
-        console.log(selectedRowValues.id);
         try {
             setIsLoading(true);
             const { error, data: dataStu } = await supabase
                 .from("students")
-                .update({  
-            name: record.name,  
-            parent: record.parent,  
-            gender: record.gender,  
-            dob: record.dob,  
-            grade: record.grade, 
-            contact: record.contact, 
-            address: record.address,    
-            gr_no: record.gr_no,
+                .update({
+                    name: record.name,
+                    parent: record.parent,
+                    gender: record.gender,
+                    dob: record.dob,
+                    grade: record.grade,
+                    contact: record.contact,
+                    address: record.address,
+                    gr_no: record.gr_no,
                 })
-                .eq("id", selectedRowValues.id);
+                .eq("id", selectedRowValues.key)
+                .select("*");
 
-            console.log(dataStu, error);
+            console.log(error, dataStu);
 
             if (error) {
                 setIsLoading(false);
@@ -100,7 +100,7 @@ const Table = (props) => {
 
             // Update frontend data
             const updatedData = props.data.map((item) =>
-                item.id === selectedRowValues.id ? { ...item, ...record, id: selectedRowValues.id } : item
+                item.key === selectedRowValues.key ? { ...item, ...record, key: selectedRowValues.key } : item
             );
             props.setData(updatedData);
             setIsModalOpen(false);
@@ -116,11 +116,11 @@ const Table = (props) => {
     };
 
     const handleEdit = (record) => {
-        console.log("Editing record:", record);  // Log the record to confirm data
+        console.log("Editing record:", record); // Log the record to confirm data
         setSelectedRowValues(record);
         setIsModalOpen(true);
         editForm.setFieldsValue({
-            id: record.key,  // Ensure this matches the field names in the form
+            id: record.key, // Ensure this matches the field names in the form
             name: record.name,
             parent: record.parent,
             gender: record.gender,
@@ -171,7 +171,7 @@ const Table = (props) => {
         {
             title: "Guardian Name",
             dataIndex: "parent",
-           
+
             filters: generateFilters(props.data, "parent"),
             filterSearch: true,
             onFilter: (value, record) => record.parent.includes(value),
@@ -250,12 +250,6 @@ const Table = (props) => {
                 cancelText="Cancel"
                 onCancel={() => setIsModalOpen(false)}
                 footer={false}
-                // onOk={() => {
-                //     editForm
-                //         .validateFields()
-                //         .then((values) => handleUpdate(values))
-                //         .catch((info) => console.error("Validate Failed:", info));
-                // }}
             >
                 <UpdateForm handleEdit={handleUpdate} form={editForm} selectedRowValues={selectedRowValues} />
             </Modal>

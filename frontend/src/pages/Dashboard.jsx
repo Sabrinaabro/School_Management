@@ -39,19 +39,18 @@ const Dashboard = ({ session }) => {
             console.log({ data });
             if (error) throw error;
             setData(
-              data.map((item) => ({
-                  key: item.id,
-                  name: item.name,
-                  parent: item.parent,
-                  gender: item.gender,
-                  dob: item.dob,
-                  grade: item.grade,
-                  contact: item.contact,
-                  address: item.address,
-                  gr_no: item.gr_no,
-              }))
-          );
-          
+                data.map((item) => ({
+                    key: item.id,
+                    name: item.name,
+                    parent: item.parent,
+                    gender: item.gender,
+                    dob: item.dob,
+                    grade: item.grade,
+                    contact: item.contact,
+                    address: item.address,
+                    gr_no: item.gr_no,
+                }))
+            );
         } catch (err) {
             console.error("Error fetching data:", err.message);
         }
@@ -65,34 +64,26 @@ const Dashboard = ({ session }) => {
     const handleAdd = async (record) => {
         try {
             setIsLoading(true);
-            const { data, error } = await supabase.from("students").insert({
-                name: record.fullName,
-                parent: record.parentName,
-                gender: record.gender,
-                dob: record.dob,
-                grade: record.grade,
-                contact: record.contactNumber,
-                address: record.address,
-                gr_no: record.grNumber,
-            });
+            const { data: newData, error } = await supabase
+                .from("students")
+                .insert({
+                    name: record.fullName,
+                    parent: record.parentName,
+                    gender: record.gender,
+                    dob: record.dob,
+                    grade: record.grade,
+                    contact: record.contactNumber,
+                    address: record.address,
+                    gr_no: record.grNumber,
+                })
+                .select("*");
 
             if (error) {
                 setIsLoading(false);
                 throw error;
             }
 
-            const newStudent = {
-                name: record.fullName,
-                parent: record.parentName,
-                gender: record.gender,
-                dob: record.dob,
-                grade: record.grade,
-                contact: record.contactNumber,
-                address: record.address,
-                gr_no: record.grNumber,
-            };
-
-            setData([...data, { ...newStudent, key: data.length + 1 }]);
+            setData((prevData) => [newData[0], ...prevData]);
             setIsLoading(false);
             setIsModalOpen(false);
             addForm.resetFields();
@@ -110,6 +101,7 @@ const Dashboard = ({ session }) => {
     return (
         <>
             <Container>
+                {contextHolder}
                 <HeaderContainer>
                     <HeaderTitle>Student List</HeaderTitle>
                     <ButtonContainer>
