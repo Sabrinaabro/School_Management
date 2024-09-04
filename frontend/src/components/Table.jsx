@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table as AntTable, Button, Popconfirm, Modal, Form, Dropdown, Menu } from "antd";
 import { EditFilled, DeleteFilled, MoreOutlined } from "@ant-design/icons";
 import styled from "styled-components";
@@ -42,7 +42,8 @@ const StyledTable = styled(AntTable)`
     }
 `;
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL,
+     import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 const generateFilters = (data = [], id) => {
     if (!Array.isArray(data) || !id) return []; // Early exit if data isn't an array or key is missing
@@ -59,22 +60,46 @@ const Table = (props) => {
     const [api, contextHolder] = notification.useNotification();
     const [editForm] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState([]);
+    const [notificationInfo, setNotificationInfo] = useState(null);
+
+
+    useEffect(() => {
+        if (notificationInfo) {
+            const { type, message, description } = notificationInfo;
+            if (type === "success") {
+                notification.success({ message, description });
+            } else if (type === "error") {
+                notification.error({ message, description });
+            }
+            setNotificationInfo(null);
+        }
+    }, [notificationInfo]);
 
     const handleDelete = async (record) => {
-        console.log(record);
         try {
-            const { error } = await supabase.from("students").delete().eq("id", record.id);
+            const { error } = await supabase.from("students").delete().eq("id", record.key);
             if (error) throw error;
-            setData(data.filter((item) => item.id !== record.id));
-            api.success({ message: "Record deleted successfully!" });
+
+            props.setData((prevData) => prevData.filter((item) => item.key !== record.key));
+
+            setNotificationInfo({
+                type: "success",
+                message: "Record deleted successfully!",
+            });
         } catch (err) {
             console.error("Error deleting record:", err.message);
-            api.error({ message: "Error deleting record", description: err.message });
+
+            setNotificationInfo({
+                type: "error",
+                message: "Error deleting record",
+                description: err.message,
+            });
         }
     };
 
     const handleUpdate = async (record) => {
-        console.log(selectedRowValues.id);
+        console.log(selectedRowValues.key);
         try {
             setIsLoading(true);
             const { error, data: dataStu } = await supabase
@@ -89,7 +114,7 @@ const Table = (props) => {
             address: record.address,    
             gr_no: record.gr_no,
                 })
-                .eq("id", selectedRowValues.id);
+                .eq("id", selectedRowValues.key);
 
             console.log(dataStu, error);
 
@@ -97,18 +122,21 @@ const Table = (props) => {
                 setIsLoading(false);
                 throw error;
             }
-
-            // Update frontend data
             const updatedData = props.data.map((item) =>
-                item.id === selectedRowValues.id ? { ...item, ...record, id: selectedRowValues.id } : item
+                item.key === selectedRowValues.key ? { ...item, ...record, key: selectedRowValues.key } : item
             );
             props.setData(updatedData);
             setIsModalOpen(false);
 
-            api.success({ message: "Record updated successfully!" });
+            setNotificationInfo({
+                type: "success",
+                message: "Record updated successfully!",
+            });
         } catch (err) {
             console.error("Error updating record:", err.message);
-            api.error({
+
+            setNotificationInfo({
+                type: "error",
                 message: "Error updating record",
                 description: err.message,
             });
@@ -116,11 +144,11 @@ const Table = (props) => {
     };
 
     const handleEdit = (record) => {
-        console.log("Editing record:", record);  // Log the record to confirm data
+        console.log("Editing record:", record);  
         setSelectedRowValues(record);
         setIsModalOpen(true);
         editForm.setFieldsValue({
-            id: record.key,  // Ensure this matches the field names in the form
+            id: record.key,  
             name: record.name,
             parent: record.parent,
             gender: record.gender,
@@ -145,7 +173,7 @@ const Table = (props) => {
             <Menu.Item key="2">
                 <Popconfirm
                     title="Are you sure to delete this student?"
-                    onConfirm={() => handleDelete(record.id)}
+                    onConfirm={() => handleDelete(record)}
                     okText="Yes"
                     cancelText="No"
                 >
@@ -242,7 +270,7 @@ const Table = (props) => {
 
     return (
         <>
-            <StyledTable columns={columns} dataSource={props.data} rowKey="id" pagination={false} />
+            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false} />
             <Modal
                 title="Edit Student"
                 open={isModalOpen}

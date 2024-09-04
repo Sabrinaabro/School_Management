@@ -15,12 +15,11 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.
 const Dashboard = ({ session }) => {
     const navigate = useNavigate();
 
-    // This will protect our route. User needs to be authenticated in order to access this route
-    // useEffect(() => {
-    //     if (!session) {
-    //         navigate("/login");
-    //     }
-    // }, [session]);
+    useEffect(() => {
+        if (!session) {
+            navigate("/login");
+        }
+    }, [session]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addForm] = Form.useForm();
@@ -32,31 +31,33 @@ const Dashboard = ({ session }) => {
         fetchData();
     }, []);
 
-    // Function to fetch data from Supabase
     const fetchData = async () => {
         try {
             const { data, error } = await supabase.from("students").select("*");
-            console.log({ data });
             if (error) throw error;
+    
+            console.log({ data });
+    
+            const validData = data.filter(item => item.id !== undefined && item.id !== null);
+    
             setData(
-              data.map((item) => ({
-                  key: item.id,
-                  name: item.name,
-                  parent: item.parent,
-                  gender: item.gender,
-                  dob: item.dob,
-                  grade: item.grade,
-                  contact: item.contact,
-                  address: item.address,
-                  gr_no: item.gr_no,
-              }))
-          );
-          
+                validData.map((item) => ({
+                    key: item.id,  
+                    name: item.name,
+                    parent: item.parent,
+                    gender: item.gender,
+                    dob: item.dob,
+                    grade: item.grade,
+                    contact: item.contact,
+                    address: item.address,
+                    gr_no: item.gr_no,
+                }))
+            );
         } catch (err) {
             console.error("Error fetching data:", err.message);
         }
     };
-
+    
     const showModal = () => {
         setIsModalOpen(true);
     };
