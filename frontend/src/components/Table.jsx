@@ -46,7 +46,7 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL,
      import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 const generateFilters = (data = [], id) => {
-    if (!Array.isArray(data) || !id) return []; // Early exit if data isn't an array or key is missing
+    if (!Array.isArray(data) || !id) return []; 
     const uniqueValues = Array.from(new Set(data.map((item) => item[id]))).filter(
         (value) => value !== undefined && value !== null
     );
@@ -57,7 +57,6 @@ const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChallanModalOpen, setIsChallanModalOpen] = useState(false);
     const [selectedRowValues, setSelectedRowValues] = useState({});
-    const [api, contextHolder] = notification.useNotification();
     const [editForm] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState([]);
@@ -104,19 +103,20 @@ const Table = (props) => {
             setIsLoading(true);
             const { error, data: dataStu } = await supabase
                 .from("students")
-                .update({  
-            name: record.name,  
-            parent: record.parent,  
-            gender: record.gender,  
-            dob: record.dob,  
-            grade: record.grade, 
-            contact: record.contact, 
-            address: record.address,    
-            gr_no: record.gr_no,
+                .update({
+                    name: record.name,
+                    parent: record.parent,
+                    gender: record.gender,
+                    dob: record.dob,
+                    grade: record.grade,
+                    contact: record.contact,
+                    address: record.address,
+                    gr_no: record.gr_no,
                 })
-                .eq("id", selectedRowValues.key);
+                .eq("id", selectedRowValues.key)
+                .select("*");
 
-            console.log(dataStu, error);
+            console.log(error, dataStu);
 
             if (error) {
                 setIsLoading(false);
@@ -144,11 +144,11 @@ const Table = (props) => {
     };
 
     const handleEdit = (record) => {
-        console.log("Editing record:", record);  
+        console.log("Editing record:", record); 
         setSelectedRowValues(record);
         setIsModalOpen(true);
         editForm.setFieldsValue({
-            id: record.key,  
+            id: record.key, 
             name: record.name,
             parent: record.parent,
             gender: record.gender,
@@ -199,7 +199,7 @@ const Table = (props) => {
         {
             title: "Guardian Name",
             dataIndex: "parent",
-           
+
             filters: generateFilters(props.data, "parent"),
             filterSearch: true,
             onFilter: (value, record) => record.parent.includes(value),
@@ -221,12 +221,32 @@ const Table = (props) => {
             width: "12%",
         },
         {
-            title: "Grade",
-            dataIndex: "grade",
-            filters: generateFilters(props.data, "grade"),
-            filterSearch: true,
-            onFilter: (value, record) => record.grade === value,
-            width: "10%",
+                title: "Grade",
+                dataIndex: "grade",
+                filters: generateFilters(props.data, "grade"),
+                filterSearch: true,
+                onFilter: (value, record) => record.grade === value,
+                width: "10%",
+                render: (value) => {
+                    const gradeMap = {
+                        1: "Pre-Nursery",
+                        2: "Nursery",
+                        3: "KinderGarden",
+                        4: "Grade 1",
+                        5: "Grade 2",
+                        6: "Grade 3",
+                        7: "Grade 4",
+                        8: "Grade 5",
+                        9: "Grade 6",
+                        10: "Grade 7",
+                        11: "Grade 8",
+                        12: "Grade 9",
+                        13: "Grade 10"
+                    };
+                    return gradeMap[value];
+                
+            }
+            
         },
         {
             title: "Contact Number",
@@ -278,12 +298,6 @@ const Table = (props) => {
                 cancelText="Cancel"
                 onCancel={() => setIsModalOpen(false)}
                 footer={false}
-                // onOk={() => {
-                //     editForm
-                //         .validateFields()
-                //         .then((values) => handleUpdate(values))
-                //         .catch((info) => console.error("Validate Failed:", info));
-                // }}
             >
                 <UpdateForm handleEdit={handleUpdate} form={editForm} selectedRowValues={selectedRowValues} />
             </Modal>

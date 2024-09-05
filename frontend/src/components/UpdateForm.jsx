@@ -7,42 +7,6 @@ const { TextArea } = Input;
 const { Option } = Select;
 const { Title } = Typography;
 
-const PageWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: auto;
-    background: #fff;
-`;
-
-const FormWrapper = styled.div`
-    width: 100%;
-    max-width: 700px;
-    background: #b9d9eb;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    margin: 0 auto;
-`;
-
-const ButtonWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 130px;
-`;
-
-const SubmitButton = styled(Button)`
-    background-color: #1890ff;
-    border-color: #1890ff;
-    width: 100%;
-    max-width: 200px;
-    &:hover {
-        background-color: #40a9ff;
-        border-color: #40a9ff;
-    }
-`;
-
 const UpdateForm = ({ selectedRowValues, handleEdit }) => {
     const [editForm] = Form.useForm();
     const [componentDisabled, setComponentDisabled] = useState(false);
@@ -149,7 +113,7 @@ const UpdateForm = ({ selectedRowValues, handleEdit }) => {
                     >
                         <TextArea rows={4} />
                     </Form.Item>
-                    
+
                     <Form.Item
                         label="GR Number"
                         name="gr_no"
@@ -172,3 +136,39 @@ const UpdateForm = ({ selectedRowValues, handleEdit }) => {
 };
 
 export default UpdateForm;
+
+const PageWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: auto;
+    background: #fff;
+`;
+
+const FormWrapper = styled.div`
+    width: 100%;
+    max-width: 700px;
+    background: #b9d9eb;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin: 0 auto;
+`;
+
+const ButtonWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 130px;
+`;
+
+const SubmitButton = styled(Button)`
+    background-color: #1890ff;
+    border-color: #1890ff;
+    width: 100%;
+    max-width: 200px;
+    &:hover {
+        background-color: #40a9ff;
+        border-color: #40a9ff;
+    }
+`;

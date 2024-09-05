@@ -8,13 +8,18 @@ import {
     DesktopOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    PieChartOutlined,
     LogoutOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
 const { Header, Sider } = Layout;
 const { Text } = Typography;
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_PROJECT_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY
+  );
+  
 
 const StyledHeader = styled(Header)`
     background: #d2d7c1;
@@ -83,6 +88,16 @@ const Navbar = () => {
         }
     };
 
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (!error) {
+            setIsAuthenticated(false);
+            navigate("/");
+        } else {
+            console.error("Error logging out:", error.message);
+        }
+    };
+
     const menuItems = [
         {
             key: "1",
@@ -99,6 +114,7 @@ const Navbar = () => {
             icon: <LogoutOutlined />,
             label: "Log Out",
             style: { marginTop: "auto" },
+            onClick: handleLogout,
         },
     ];
 

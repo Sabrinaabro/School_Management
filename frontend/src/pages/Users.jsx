@@ -225,52 +225,47 @@ const Users = () => {
   }
 };
 
-
-  // Function to handle adding a new user
   const handleAdd = async (values) => {
     try {
-      setIsLoading(true);
-      const { data, error } = await supabaseAdmin.auth.admin.createUser({
-        email: values.email,
-        password: values.password,
-        email_confirm: true,
-        user_metadata: {
-          role: values.role,
-          username: values.fullName,
-          contactNumber: values.contactNumber,
-          address: values.address,
-        },
-      });
+        setIsLoading(true);
+        const { data: newUser, error } = await supabaseAdmin.auth.admin.createUser({
+            email: values.email,
+            password: values.password,
+            email_confirm: true,
+            user_metadata: {
+                role: values.role,
+                username: values.fullName,
+                contactNumber: values.contactNumber,
+                address: values.address,
+            },
+        });
 
-      if (error) {
+        if (error) {
+            throw error;
+        }
+        const formattedUser = {
+            username: values.fullName,
+            email: values.email,
+            contact_number: values.contactNumber,
+            address: values.address,
+            role: values.role,
+        };
+        setData([...data, { ...formattedUser, key: data.length + 1 }]);
+
         setIsLoading(false);
-        throw error;
-      }
-
-      const newUser = {
-        username: values.fullName,
-        email: values.email,
-        contact_number: values.contactNumber,
-        address: values.address,
-        role: values.role,
-      };
-
-     
-
-      setData([...data, { ...newUser, key: data.length + 1 }]);
-      setIsLoading(false);
-      setIsAddModalOpen(false);
-      addForm.resetFields();
-      api.success({ message: "User added successfully!" });
+        setIsAddModalOpen(false);
+        addForm.resetFields();
+        api.success({ message: "User added successfully!" });
     } catch (err) {
-      console.error("Error adding user:", err.message);
-      setIsLoading(false);
-      api.error({
-        message: "Error adding user",
-        description: err.message,
-      });
+        console.error("Error adding user:", err.message);
+        setIsLoading(false);
+        api.error({
+            message: "Error adding user",
+            description: err.message,
+        });
     }
-  };
+};
+
 
   // Show Add User modal
   const showAddModal = () => {

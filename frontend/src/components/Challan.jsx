@@ -1,8 +1,48 @@
-import React, { useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Row, Col, Button } from "antd";
 import logo from "/src/assets/evas.jpg";
 import ublLogo from "/src/assets/ubl.png";
+
+
+const addWorkingDays = (date, daysToAdd) => {
+  let currentDate = new Date(date);
+  let addedDays = 0;
+  
+  while (addedDays < daysToAdd) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    const day = currentDate.getDay();
+    if (day !== 6 && day !== 0) { 
+      addedDays++;
+    }
+  }
+  
+  return currentDate;
+};
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+};
+
+const numberToWords = (num) => {
+  const a = [
+    "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+    "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+  ];
+  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+  const inWords = (n) => {
+    if (n < 20) return a[n];
+    const digit = n % 10;
+    if (n < 100) return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
+    if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 === 0 ? "" : " and " + inWords(n % 100));
+    return inWords(Math.floor(n / 1000)) + " Thousand" + (n % 1000 !== 0 ? " " + inWords(n % 1000) : "");
+  };
+
+  return inWords(num) + " Only";
+};
 
 const ChallanContainer = styled.div`
   @font-face {
@@ -134,7 +174,35 @@ const ChallanContainer = styled.div`
 
 const Challan = ({ student = {} }) => {
   const challanRef = useRef(null);
-  const { name, parent, grade, gr_no } = student;
+  const issueDate = new Date(); 
+  const dueDate = addWorkingDays(issueDate, 6); 
+  const expiryDate = addWorkingDays(issueDate, 10); 
+
+  const {
+    name = "Student Name",
+    parent = "Parent Name",
+    grade = "Grade",
+    gr_no = "1234",
+    tuitionFee = 4500, 
+    arrears = 0, // Dynamic value
+    
+  } = student;
+
+  const [lateFee, setLateFee] = useState(0);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    // If current date is beyond due date, apply late fee
+    if (currentDate > dueDate) {
+      setLateFee(500);
+    } else {
+      setLateFee(0);
+    }
+  }, [dueDate]);
+
+  // Calculations
+  const totalAmount = tuitionFee + arrears;
+  const totalAfterLateFee = totalAmount + lateFee;
 
   const printChallan = () => {
     const printContents = challanRef.current.innerHTML;
@@ -172,7 +240,7 @@ const Challan = ({ student = {} }) => {
                 <p><strong>Name:</strong> {name}</p>
                 <p><strong>Father's Name:</strong> {parent}</p>
                 <p><strong>Grade:</strong> {grade}</p>
-                <p><strong>GR No:</strong> {gr_no}</p>
+                <p><strong>GR No/Buyer Code:</strong> {gr_no}</p>
                 <table>
                   <thead>
                     <tr>
@@ -182,44 +250,36 @@ const Challan = ({ student = {} }) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>1. Tuition Fee:</td>
-                      <td></td>
+                      <td>Tuition Fee:</td>
+                      <td>{tuitionFee}</td>
                     </tr>
                     <tr>
-                      <td>2. Net Payment (Before Due Date):</td>
-                      <td></td>
+                      <td>Arrears:</td>
+                      <td>{arrears}</td>
                     </tr>
                     <tr>
-                      <td>3. Net Payment (After Due Date):</td>
-                      <td></td>
+                      <td>Total Amount (PKR):</td>
+                      <td>{totalAmount}</td>
                     </tr>
                     <tr>
-                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Arrears:</td>
-                      <td></td>
+                      <td>Late Fee After Due Date:</td>
+                      <td>{lateFee}</td>
                     </tr>
                     <tr>
-                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Total Amount (PKR):</td>
-                      <td></td>
+                      <td>Total Amount After Late Fee:</td>
+                      <td>{totalAfterLateFee}</td>
                     </tr>
                     <tr>
-                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Late Fee After Due Date:</td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td style={{ textAlign: 'right', paddingRight: '10px' }}>Total Amount After Late Fee:</td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td style={{ border: 'none' }}>Amount in Words:</td>
+                      <td style={{ border: 'none' }}>Amount in Words: {numberToWords(totalAfterLateFee)}</td>
                       <td style={{ border: 'none' }}></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div className="footer">
-                <div>Issue Date: __________</div>
-                <div>Due Date: __________</div>
-                <div>Expiry Date: __________</div>
+                <div>Issue Date: {formatDate(issueDate)}</div>
+                <div>Due Date: {formatDate(dueDate)}</div>
+                <div>Expiry Date: {formatDate(expiryDate)}</div>
               </div>
               <div className="footer">
                 <div>School Accountant</div>
