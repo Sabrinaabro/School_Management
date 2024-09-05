@@ -13,6 +13,7 @@ import { EditFilled, DeleteFilled, PlusOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import { TableBadge } from "../components/styled/Badge";
 import { createClient } from "@supabase/supabase-js";
+import useRole from '../hooks/useRole';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_PROJECT_URL,
@@ -32,6 +33,7 @@ const Users = () => {
   const [addForm] = Form.useForm();
   const [api, contextHolder] = notification.useNotification();
   const [data, setData] = useState([]);
+
 
   useEffect(() => {
     fetchData();

@@ -8,24 +8,26 @@ import StudentForm from "../components/StudentForm";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { notification } from "antd";
-import moment from "moment";
+import useRole from '../hooks/useRole';
+import Preloader from "../components/PreLoader";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 const Dashboard = ({ session }) => {
+   
     const navigate = useNavigate();
+    const [isSessionLoading, setIsSessionLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [addForm] = Form.useForm();
+    const [data, setData] = useState();
+    const [api, contextHolder] = notification.useNotification();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (!session) {
             navigate("/login");
         }
     }, [session]);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [addForm] = Form.useForm();
-    const [data, setData] = useState();
-    const [api, contextHolder] = notification.useNotification();
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -99,7 +101,7 @@ const Dashboard = ({ session }) => {
             });
         }
     };
-
+   
     return (
         <>
             <Container>
