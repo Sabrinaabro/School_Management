@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.1"
+    "@reduxjs/toolkit": "^2.2.7",
+    "@supabase/supabase-js": "^2.45.1",
+    "react-redux": "^9.1.2"
   }
 }

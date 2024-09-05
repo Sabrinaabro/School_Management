@@ -8,6 +8,7 @@ import PreLoader from "./components/PreLoader";
 import Users from "./pages/Users";
 import { createClient } from "@supabase/supabase-js";
 import Challan from "./components/Challan";
+import Unauthorized from "./pages/Unauthorized";
 
 // creates a supabase client.
 const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
@@ -47,7 +48,7 @@ function App() {
 
     return (
         <>
-            {location.pathname !== "/login" && location.pathname !== "/" && <Navbar />}
+            {location.pathname !== "/login" && location.pathname !== "/" && location.pathname !== "/unauthorized" && <Navbar />}
 
             
             <Routes>
@@ -56,6 +57,7 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard session={session} />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/challan" element={<Challan />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
                 
             </Routes>
         </>

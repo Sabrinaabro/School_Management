@@ -14,7 +14,6 @@ import styled from "styled-components";
 import { TableBadge } from "../components/styled/Badge";
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_PROJECT_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -34,12 +33,10 @@ const Users = () => {
   const [api, contextHolder] = notification.useNotification();
   const [data, setData] = useState([]);
 
-  // Fetch data from Supabase on component mount
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Function to fetch data from Supabase
   const fetchData = async () => {
     try {
       const { data, error } = await supabase.from("users").select("*");
@@ -59,7 +56,6 @@ const Users = () => {
     }
   };
 
-  // Function to generate filters for table columns
   const generateFilters = (data, key) => {
     const uniqueValues = Array.from(
       new Set(data.map((item) => item[key]))
@@ -67,7 +63,6 @@ const Users = () => {
     return uniqueValues.map((value) => ({ text: value, value }));
   };
 
-  // Define table columns
   const columns = [
     {
       title: "Name",
@@ -154,7 +149,6 @@ const Users = () => {
     },
   ];
 
-  // Function to handle record deletion
   const handleDelete = async (record) => {
     try {
       const { error } = await supabase.from("users").delete().eq("id", record.key);
@@ -167,7 +161,6 @@ const Users = () => {
     }
   };
 
-  // Function to handle record editing
   const handleEdit = (record) => {
     setSelectedRowValues(record);
     setIsModalOpen(true);
@@ -180,7 +173,6 @@ const Users = () => {
     });
   };
 
-  // Function to handle record update
   const handleUpdate = async (values) => {
   try {
 
@@ -202,8 +194,6 @@ const Users = () => {
         throw error;
       }
 25
-
-    // Update frontend data
     const updatedData = data.map((item) =>
       item.key === selectedRowValues.key
         ? { ...item, ...values, key: selectedRowValues.key }
@@ -266,8 +256,6 @@ const Users = () => {
     }
 };
 
-
-  // Show Add User modal
   const showAddModal = () => {
     setIsAddModalOpen(true);
   };
@@ -349,7 +337,7 @@ const Users = () => {
         </Form>
       </Modal>
 
-      {/* Add User Modal */}
+
       <Modal
         title="Add User"
         open={isAddModalOpen}
