@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, Modal, Input } from "antd";
 import logo from "/src/assets/evas.jpg";
 import ublLogo from "/src/assets/ubl.png";
 
@@ -171,6 +171,18 @@ const ChallanContainer = styled.div`
     font-family: 'Proxima Nova Regular';
   }
 `;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center; /* Center the buttons horizontally */
+  align-items: center; /* Center the buttons vertically if needed */
+  gap: 10px;
+  margin: 0 auto; /* Center the container itself */
+
+  @media (max-width: 768px) {
+    align-self: stretch;
+  }
+`;
+
 
 const Challan = ({ student = {} }) => {
   const challanRef = useRef(null);
@@ -184,25 +196,30 @@ const Challan = ({ student = {} }) => {
     grade = "Grade",
     gr_no = "1234",
     tuitionFee = 4500, 
-    arrears = 0, // Dynamic value
+     
     
   } = student;
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [arrears, setArrears] = useState(0);
   const [lateFee, setLateFee] = useState(0);
 
-  useEffect(() => {
-    const currentDate = new Date();
-    // If current date is beyond due date, apply late fee
-    if (currentDate > dueDate) {
-      setLateFee(500);
-    } else {
-      setLateFee(0);
-    }
-  }, [dueDate]);
-
-  // Calculations
   const totalAmount = tuitionFee + arrears;
   const totalAfterLateFee = totalAmount + lateFee;
+
+  // Function to show modal
+  const showModal = () => {
+    setModalVisible(true);
+  };
+
+
+  const handleOk = () => {
+    setModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
 
   const printChallan = () => {
     const printContents = challanRef.current.innerHTML;
@@ -211,7 +228,7 @@ const Challan = ({ student = {} }) => {
     document.body.innerHTML = printContents;
     window.print();
     document.body.innerHTML = originalContents;
-    window.location.reload(); // To refresh the page and restore original content
+    window.location.reload(); 
   };
 
   return (
@@ -291,9 +308,41 @@ const Challan = ({ student = {} }) => {
             </Col>
           ))}
         </Row>
+        <ButtonContainer>
+        <Button type="primary" onClick={showModal} className="no-print">
+          Add Amount
+        </Button>
+
+        <Modal
+          title="Enter Amount"
+          visible={modalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <div>
+          <label style={{ display: 'block', marginBottom: 5 }}>Enter Arrears</label>
+            <Input
+              type="number"
+              placeholder="Enter Arrears"
+              value={arrears}
+              onChange={(e) => setArrears(Number(e.target.value))}
+              style={{ marginBottom: 10 }}
+            />
+            
+            <label style={{ display: 'block', marginBottom: 5 }}>Enter Late Fee</label>
+            <Input
+              type="number"
+              placeholder="Enter Late Fee"
+              value={lateFee}
+              onChange={(e) => setLateFee(Number(e.target.value))}
+              style={{ marginBottom: 10 }}
+            />
+          </div>
+        </Modal>
         <Button type="primary" onClick={printChallan} className="no-print">
           Print Challan
         </Button>
+        </ButtonContainer>
       </ChallanContainer>
     </div>
   );

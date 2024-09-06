@@ -1,4 +1,3 @@
-// src/components/exportToExcel.jsx
 import * as XLSX from "xlsx";
 
 export const exportToExcel = (data, fileName = "StudentData.xlsx") => {
@@ -7,7 +6,6 @@ export const exportToExcel = (data, fileName = "StudentData.xlsx") => {
     return;
   }
 
-  // Prepare data for Excel export
   const formattedData = data.map((item) => ({
     Name: item.name,
     Parent: item.parent,
@@ -19,11 +17,9 @@ export const exportToExcel = (data, fileName = "StudentData.xlsx") => {
     "GR Number": item.gr_no,
   }));
 
-  // Create a new workbook and add a worksheet
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
 
-  // Write the Excel file and trigger download
   XLSX.writeFile(workbook, fileName);
 };

@@ -36,11 +36,10 @@ const Dashboard = ({ session }) => {
             const { data, error } = await supabase.from("students").select("*");
             if (error) throw error;
     
-            console.log({ data }); // Debugging: Log the fetched data
+            console.log({ data }); 
     
             const validData = data.filter(item => item.id !== undefined && item.id !== null);
     
-            // Assuming the grade is already stored as string in the database
             setData(
                 validData.map((item) => ({
                     key: item.id,
@@ -48,7 +47,7 @@ const Dashboard = ({ session }) => {
                     parent: item.parent,
                     gender: item.gender,
                     dob: item.dob,
-                    grade: item.grade, // No need for mapping if grade is stored as string
+                    grade: item.grade,
                     contact: item.contact,
                     address: item.address,
                     gr_no: item.gr_no,
@@ -63,8 +62,6 @@ const Dashboard = ({ session }) => {
     const showModal = () => {
         setIsModalOpen(true);
     };
-
-    // Function to handle adding a new user
     const gradeMap = {
         1: "Pre-Nursery",
         2: "Nursery",

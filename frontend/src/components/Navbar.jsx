@@ -119,10 +119,10 @@ const Navbar = () => {
       console.error("Error fetching user:", error.message);
     } else if (user) {
       setIsAuthenticated(true);
-      // Assuming the username is stored in the `full_name` field in the profile
+      
       const { data, error: profileError } = await supabase
-        .from("users") // Replace with your actual table name
-        .select("username") // Adjust to match your column
+        .from("users") 
+        .select("username")
         .eq("id", user.id)
         .single();
 
@@ -142,7 +142,7 @@ const Navbar = () => {
     {
       key: "1",
       icon: <DesktopOutlined />,
-      label: <Link to="/dashboard">Admin</Link>,
+      label: <Link to="/dashboard">Dashboard</Link>,
     },
     {
       key: "2",

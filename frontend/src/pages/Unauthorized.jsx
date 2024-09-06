@@ -8,7 +8,7 @@ const Unauthorized = () => {
   const navigate = useNavigate();
 
   const handleReturn = () => {
-    navigate(-1); 
+    navigate("/dashboard"); 
   };
 
   return (
