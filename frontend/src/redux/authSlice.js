@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: 'user',
+  name: 'users',
   initialState,
   reducers: {
     setRole: (state, action) => {
