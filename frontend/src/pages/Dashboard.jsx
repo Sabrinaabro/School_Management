@@ -16,7 +16,6 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.
 const Dashboard = ({ session }) => {
    
     const navigate = useNavigate();
-    const [isSessionLoading, setIsSessionLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addForm] = Form.useForm();
     const [data, setData] = useState();
@@ -32,24 +31,25 @@ const Dashboard = ({ session }) => {
     useEffect(() => {
         fetchData();
     }, []);
-
+    
     const fetchData = async () => {
         try {
             const { data, error } = await supabase.from("students").select("*");
             if (error) throw error;
     
-            console.log({ data });
+            console.log({ data }); // Debugging: Log the fetched data
     
             const validData = data.filter(item => item.id !== undefined && item.id !== null);
     
+            // Assuming the grade is already stored as string in the database
             setData(
-                data.map((item) => ({
+                validData.map((item) => ({
                     key: item.id,
                     name: item.name,
                     parent: item.parent,
                     gender: item.gender,
                     dob: item.dob,
-                    grade: item.grade,
+                    grade: item.grade, // No need for mapping if grade is stored as string
                     contact: item.contact,
                     address: item.address,
                     gr_no: item.gr_no,
@@ -60,34 +60,61 @@ const Dashboard = ({ session }) => {
         }
     };
     
+    
     const showModal = () => {
         setIsModalOpen(true);
     };
 
     // Function to handle adding a new user
+    const gradeMap = {
+        1: "Pre-Nursery",
+        2: "Nursery",
+        3: "KinderGarden",
+        4: "Grade 1",
+        5: "Grade 2",
+        6: "Grade 3",
+        7: "Grade 4",
+        8: "Grade 5",
+        9: "Grade 6",
+        10: "Grade 7",
+        11: "Grade 8",
+        12: "Grade 9",
+        13: "Grade 10"
+    };
+    
     const handleAdd = async (record) => {
         try {
             setIsLoading(true);
+            
+            const mappedGrade = gradeMap[record.grade] || record.grade;
+    
+           
+            const dobDate = new Date(record.dob);
+            const formattedDOB = new Date(dobDate.getTime() - dobDate.getTimezoneOffset() * 60000)
+                                  .toISOString().split('T')[0];
+    
+           
             const { data: newData, error } = await supabase
                 .from("students")
                 .insert({
                     name: record.fullName,
                     parent: record.parentName,
                     gender: record.gender,
-                    dob: record.dob,
-                    grade: record.grade,
+                    dob: formattedDOB, 
+                    grade: mappedGrade,  
                     contact: record.contactNumber,
                     address: record.address,
                     gr_no: record.grNumber,
                 })
                 .select("*");
-
+    
             if (error) {
                 setIsLoading(false);
                 throw error;
             }
-
+    
             setData((prevData) => [newData[0], ...prevData]);
+    
             setIsLoading(false);
             setIsModalOpen(false);
             addForm.resetFields();
@@ -101,7 +128,7 @@ const Dashboard = ({ session }) => {
             });
         }
     };
-   
+    
     return (
         <>
             <Container>

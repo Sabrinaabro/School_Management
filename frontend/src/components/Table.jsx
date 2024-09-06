@@ -3,9 +3,7 @@ import { Table as AntTable, Button, Popconfirm, Modal, Form, Dropdown, Menu } fr
 import { EditFilled, DeleteFilled, MoreOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import UpdateForm from "./UpdateForm";
-import { TableBadge } from "./styled/Badge";
 import Challan from "./Challan";
-import moment from "moment";
 import { createClient } from "@supabase/supabase-js";
 import { notification } from "antd";
 
@@ -59,7 +57,6 @@ const Table = (props) => {
     const [selectedRowValues, setSelectedRowValues] = useState({});
     const [editForm] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState([]);
     const [notificationInfo, setNotificationInfo] = useState(null);
 
 
@@ -97,51 +94,87 @@ const Table = (props) => {
         }
     };
 
+    const gradeMap = {
+        1: "Pre-Nursery",
+        2: "Nursery",
+        3: "KinderGarden",
+        4: "Grade 1",
+        5: "Grade 2",
+        6: "Grade 3",
+        7: "Grade 4",
+        8: "Grade 5",
+        9: "Grade 6",
+        10: "Grade 7",
+        11: "Grade 8",
+        12: "Grade 9",
+        13: "Grade 10"
+    };
+
     const handleUpdate = async (record) => {
-        console.log(selectedRowValues.key);
+        console.log("Selected Row Key:", selectedRowValues.key);
+        
         try {
             setIsLoading(true);
+    
+            const mappedGrade = gradeMap[record.grade] || record.grade; 
+    
+            const dobDate = new Date(record.dob);
+            const formattedDOB = new Date(dobDate.getTime() - dobDate.getTimezoneOffset() * 60000)
+                                  .toISOString().split('T')[0];  
+    
             const { error, data: dataStu } = await supabase
                 .from("students")
                 .update({
                     name: record.name,
                     parent: record.parent,
                     gender: record.gender,
-                    dob: record.dob,
-                    grade: record.grade,
+                    dob: formattedDOB,  
+                    grade: mappedGrade,  
                     contact: record.contact,
                     address: record.address,
                     gr_no: record.gr_no,
                 })
                 .eq("id", selectedRowValues.key)
                 .select("*");
-
-            console.log(error, dataStu);
-
+    
+            console.log("Data sent to backend:", {
+                ...record,
+                dob: formattedDOB,
+                grade: mappedGrade,
+            });
+    
             if (error) {
                 setIsLoading(false);
                 throw error;
             }
+    
             const updatedData = props.data.map((item) =>
-                item.key === selectedRowValues.key ? { ...item, ...record, key: selectedRowValues.key } : item
+                item.key === selectedRowValues.key
+                    ? { ...item,
+                        ...record, grade: mappedGrade, dob: formattedDOB, key: selectedRowValues.key }
+                    : item
             );
             props.setData(updatedData);
+    
             setIsModalOpen(false);
-
+    
             setNotificationInfo({
                 type: "success",
                 message: "Record updated successfully!",
             });
         } catch (err) {
             console.error("Error updating record:", err.message);
-
+    
             setNotificationInfo({
                 type: "error",
                 message: "Error updating record",
                 description: err.message,
             });
+        } finally {
+            setIsLoading(false);
         }
     };
+    
 
     const handleEdit = (record) => {
         console.log("Editing record:", record); 
@@ -194,7 +227,7 @@ const Table = (props) => {
             filterSearch: true,
             onFilter: (value, record) => record.name.includes(value),
             sorter: (a, b) => a.name.localeCompare(b.name),
-            width: "10%",
+            width: "15%",
         },
         {
             title: "Guardian Name",
@@ -227,25 +260,6 @@ const Table = (props) => {
                 filterSearch: true,
                 onFilter: (value, record) => record.grade === value,
                 width: "10%",
-                render: (value) => {
-                    const gradeMap = {
-                        1: "Pre-Nursery",
-                        2: "Nursery",
-                        3: "KinderGarden",
-                        4: "Grade 1",
-                        5: "Grade 2",
-                        6: "Grade 3",
-                        7: "Grade 4",
-                        8: "Grade 5",
-                        9: "Grade 6",
-                        10: "Grade 7",
-                        11: "Grade 8",
-                        12: "Grade 9",
-                        13: "Grade 10"
-                    };
-                    return gradeMap[value];
-                
-            }
             
         },
         {

@@ -239,7 +239,7 @@ const Challan = ({ student = {} }) => {
               <div className="challan-details">
                 <p><strong>Name:</strong> {name}</p>
                 <p><strong>Father's Name:</strong> {parent}</p>
-                <p><strong>Grade:</strong> {grade}</p>
+                <p><strong>Grade:</strong> {String(grade)}</p>
                 <p><strong>GR No/Buyer Code:</strong> {gr_no}</p>
                 <table>
                   <thead>
