@@ -3,13 +3,12 @@ import Table from "../components/Table";
 import styled from "styled-components";
 import { useState } from "react";
 import { Button, Modal, Form } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, FileExcelOutlined } from "@ant-design/icons";
 import StudentForm from "../components/StudentForm";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 import { notification } from "antd";
-import useRole from '../hooks/useRole';
-import Preloader from "../components/PreLoader";
+import { exportToExcel } from "../components/exportToExcel"; 
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
@@ -139,6 +138,11 @@ const Dashboard = ({ session }) => {
                         <AddButton icon={<PlusOutlined />} onClick={showModal}>
                             Add Student
                         </AddButton>
+                        <ExportButton
+                            icon={<FileExcelOutlined />}
+                            onClick={() => exportToExcel(data)}>
+                            Export to Excel
+                        </ExportButton>
                     </ButtonContainer>
                 </HeaderContainer>
                 <Table data={data} setData={setData} />
@@ -209,6 +213,19 @@ const AddButton = styled(Button)`
 
     &:hover {
         background-color: #40a9ff;
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+const ExportButton = styled(Button)`
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+
+    &:hover {
+        background-color: #34d058;
     }
 
     @media (max-width: 768px) {
