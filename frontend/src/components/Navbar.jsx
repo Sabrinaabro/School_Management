@@ -9,6 +9,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LogoutOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { createClient } from "@supabase/supabase-js";
 
@@ -139,6 +140,11 @@ const Navbar = () => {
   }, []);
 
   const menuItems = [
+    {
+      key: "home",
+      icon: <HomeOutlined />,
+      label: <Link to="/">Home</Link>,
+    },
     {
       key: "1",
       icon: <DesktopOutlined />,
