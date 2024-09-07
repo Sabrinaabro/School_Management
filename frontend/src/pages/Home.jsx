@@ -2,14 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
+import ParticleBackground from '../components/ParticleBackground';
 
 // Styled Components
 const HomeContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh;  
     background-color: transparent;
+    
 `;
 
 const Banner = styled.div`
@@ -81,6 +83,7 @@ const StyledButton = styled(Button)`
 function Home() {
     return (
         <HomeContainer>
+            <ParticleBackground />
             <Banner>
                 <LeftContent>
                     <Logo src="/src/assets/evas.jpg" alt="School Logo" />
