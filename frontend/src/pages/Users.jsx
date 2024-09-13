@@ -46,9 +46,9 @@ const Users = () => {
       setData(
         data.map((item) => ({
           key: item.id,
-          name: item.username,
+          username: item.username,
           email: item.email,
-          contactNumber: item.contact_number,
+          contact_number: item.contact_number,
           address: item.address,
           role: item.role,
         }))
@@ -68,11 +68,11 @@ const Users = () => {
   const columns = [
     {
       title: "Name",
-      dataIndex: "name",
-      filters: generateFilters(data, "name"),
+      dataIndex: "username",
+      filters: generateFilters(data, "username"),
       filterSearch: true,
       onFilter: (value, record) => record.name.includes(value),
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => a.name.localeCompare(b.username),
       width: "15%",
     },
     {
@@ -85,7 +85,7 @@ const Users = () => {
     },
     {
       title: "Contact Number",
-      dataIndex: "contactNumber",
+      dataIndex: "contact_number",
       filters: generateFilters(data, "contactNumber"),
       filterSearch: true,
       onFilter: (value, record) => record.contactNumber.includes(value),
@@ -167,9 +167,9 @@ const Users = () => {
     setSelectedRowValues(record);
     setIsModalOpen(true);
     editForm.setFieldsValue({
-      fullName: record.name,
+      username: record.username,
       email: record.email,
-      contactNumber: record.contactNumber,
+      contact_number: record.contact_number,
       address: record.address,
       role: record.role,
     });
@@ -182,9 +182,9 @@ const Users = () => {
     const { error } = await supabase
       .from('users')
       .update({
-        username: values.fullName,
+        username: values.username,
         email: values.email,
-        contact_number: values.contactNumber,
+        contact_number: values.contact_number,
         address: values.address,
         role: values.role,
       })
@@ -226,8 +226,8 @@ const Users = () => {
             email_confirm: true,
             user_metadata: {
                 role: values.role,
-                username: values.fullName,
-                contactNumber: values.contactNumber,
+                username: values.username,
+                contactNumber: values.contact_number,
                 address: values.address,
             },
         });
@@ -236,9 +236,9 @@ const Users = () => {
             throw error;
         }
         const formattedUser = {
-            username: values.fullName,
+            username: values.username,
             email: values.email,
-            contact_number: values.contactNumber,
+            contact_number: values.contact_number,
             address: values.address,
             role: values.role,
         };
@@ -299,7 +299,7 @@ const Users = () => {
       >
         <Form form={editForm} layout="vertical">
           <Form.Item
-            name="fullName"
+            name="username"
             label="Full Name"
             rules={[{ required: true, message: "Please enter your name" }]}
           >
@@ -313,7 +313,7 @@ const Users = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="contactNumber"
+            name="contact_number"
             label="Contact Number"
             rules={[{ required: true, message: "Please enter a contact number" }]}
           >
@@ -356,7 +356,7 @@ const Users = () => {
       >
         <Form form={addForm} layout="vertical">
           <Form.Item
-            name="fullName"
+            name="username"
             label="Full Name"
             rules={[{ required: true, message: "Please enter your name" }]}
           >
@@ -377,7 +377,7 @@ const Users = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item
-            name="contactNumber"
+            name="contact_number"
             label="Contact Number"
             rules={[{ required: true, message: "Please enter a contact number" }]}
           >

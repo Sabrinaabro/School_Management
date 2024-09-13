@@ -1,5 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import logoImage from '../assets/evas.jpg';
+import bgImage from '../assets/bg.jpg';
 
 const blink = keyframes`
   0%, 100% { opacity: 1; }
@@ -37,7 +39,7 @@ const PreloaderWrapper = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('/src/assets/bg.jpg');
+    background-image: url(${bgImage});
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -65,7 +67,7 @@ const LoadingText = styled.div`
 const Preloader = () => {
   return (
     <PreloaderWrapper>
-      <Logo src="/src/assets/evas.jpg" alt="Logo" />
+      <Logo src={logoImage} alt="Logo" />
       <LoadingText>Eva's Academy</LoadingText>
     </PreloaderWrapper>
   );

@@ -12,6 +12,7 @@ import {
   HomeOutlined,
 } from "@ant-design/icons";
 import { createClient } from "@supabase/supabase-js";
+import logoImage from '../assets/evas.jpg';
 
 const { Header, Sider } = Layout;
 
@@ -189,12 +190,7 @@ const Navbar = () => {
       <Layout>
         <StyledHeader>
           <HeaderContent>
-            <img
-              src="/src/assets/evas.jpg"
-              width="50"
-              height="45"
-              alt="Logo"
-            />
+          <img src={logoImage} width="50" height="45" alt="Logo" />
             Eva's Academy
           </HeaderContent>
           <HeaderContentWrapper>

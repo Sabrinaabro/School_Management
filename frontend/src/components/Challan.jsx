@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Row, Col, Button, Modal, Input } from "antd";
 import logo from "/src/assets/evas.jpg";
 import ublLogo from "/src/assets/ubl.png";
+import ReactToPrint from 'react-to-print';
 
 
 const addWorkingDays = (date, daysToAdd) => {
@@ -45,7 +46,7 @@ const numberToWords = (num) => {
 };
 
 const ChallanContainer = styled.div`
-  @font-face {
+   @font-face {
     font-family: 'Active Heart';
     src: url('/src/assets/fonts/SUSE-Regular.ttf') format('truetype');
   }
@@ -60,8 +61,9 @@ const ChallanContainer = styled.div`
     src: url('/src/assets/fonts/ProximaNova-Regular.ttf') format('truetype');
   }
 
+
   width: 100%;
-  max-width: 1200px; 
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ddd;
@@ -71,11 +73,10 @@ const ChallanContainer = styled.div`
   color: #333;
   overflow: hidden;
 
-  @media print {
+
     .no-print {
       display: none;
     }
-  }
 
   .header {
     text-align: center;
@@ -101,12 +102,12 @@ const ChallanContainer = styled.div`
 
       .bank-name {
         font-family: 'Agrandir Regular';
-        font-size: 11px; 
+        font-size: 11px;
         font-weight: bold;
-        margin-top: 5px; 
+        margin-top: 5px;
         text-align: center;
-        white-space: normal; 
-        line-height: 1.2; 
+        white-space: normal;
+        line-height: 1.2;
       }
 
       .school-logo {
@@ -124,7 +125,7 @@ const ChallanContainer = styled.div`
 
     p {
       margin: 0;
-      font-family: 'Active Heart'; 
+      font-family: 'Active Heart';
       font-weight: regular;
       font-size: 12px;
       text-align: center;
@@ -132,6 +133,7 @@ const ChallanContainer = styled.div`
     }
   }
 
+ 
   .challan-details {
     text-align: left;
     margin-top: 20px;
@@ -162,7 +164,7 @@ const ChallanContainer = styled.div`
       }
     }
   }
-
+    
   .footer {
     margin-top: 20px;
     display: flex;
@@ -171,12 +173,14 @@ const ChallanContainer = styled.div`
     font-family: 'Proxima Nova Regular';
   }
 `;
+
+// Container for buttons
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: center; /* Center the buttons horizontally */
-  align-items: center; /* Center the buttons vertically if needed */
+  justify-content: center;
+  align-items: center;
   gap: 10px;
-  margin: 0 auto; /* Center the container itself */
+  margin: 0 auto;
 
   @media (max-width: 768px) {
     align-self: stretch;
@@ -236,7 +240,7 @@ const Challan = ({ student = {} }) => {
       <ChallanContainer>
         <Row gutter={16}>
           {["Bank Copy", "School Copy", "Student Copy"].map((copy, index) => (
-            <Col span={8} key={index}>
+            <Col span={8} key={index} className="page-break">
               <div className="header">
                 <div className="logo-container">
                   <div className="ubl-logo-container">
@@ -299,10 +303,10 @@ const Challan = ({ student = {} }) => {
                 <div>Expiry Date: {formatDate(expiryDate)}</div>
               </div>
               <div className="footer">
-                <div>School Accountant</div>
-                <div>Bank Stamp</div>
+              <div style={{ padding: '30px' }}>School Accountant</div>
+              <div style={{ padding: '30px' }}>Bank Stamp</div>
               </div>
-              <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <div style={{ marginBottom: "20px", textAlign: "center" }}>
                 {copy}
               </div>
             </Col>
@@ -344,6 +348,7 @@ const Challan = ({ student = {} }) => {
         </Button>
         </ButtonContainer>
       </ChallanContainer>
+      
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Button, Form, Input, message } from "antd";
 import styled from "styled-components";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
+import logoImage from '../assets/evas.jpg';
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
@@ -83,7 +84,7 @@ const Login = () => {
     return (
         <PageWrapper>
             <FormWrapper>
-                <Logo src="src/assets/evas.jpg" alt="Logo" />
+            <Logo src={logoImage} alt="Logo" />
                 <StyledForm
                     name="basic"
                     initialValues={{

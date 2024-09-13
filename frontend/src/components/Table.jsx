@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Table as AntTable, Button, Popconfirm, Modal, Form, Dropdown, Menu } from "antd";
 import { EditFilled, DeleteFilled, MoreOutlined } from "@ant-design/icons";
 import styled from "styled-components";
@@ -6,6 +6,7 @@ import UpdateForm from "./UpdateForm";
 import Challan from "./Challan";
 import { createClient } from "@supabase/supabase-js";
 import { notification } from "antd";
+import ReactToPrint from 'react-to-print';
 
 const StyledTable = styled(AntTable)`
     .ant-table {
@@ -55,9 +56,12 @@ const Table = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChallanModalOpen, setIsChallanModalOpen] = useState(false);
     const [selectedRowValues, setSelectedRowValues] = useState({});
+    const [selectedRows, setSelectedRows] = useState([]);
     const [editForm] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
     const [notificationInfo, setNotificationInfo] = useState(null);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]); 
+    const printRef = useRef(null);
 
 
     useEffect(() => {
@@ -193,10 +197,24 @@ const Table = (props) => {
         });
     };
 
-    const handleChallan = (record) => {
-        setSelectedRowValues(record);
+
+    const handleChallanGeneration = () => {
+        if (selectedRows.length === 0) {
+          notification.error({
+            message: "No students selected",
+            description: "Please select at least one student to generate challans.",
+          });
+          return;
+        }
+    
         setIsChallanModalOpen(true);
-    };
+      };
+    
+      const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+          setSelectedRows(selectedRows);
+        },
+      };
 
     const menu = (record) => (
         <Menu>
@@ -213,9 +231,7 @@ const Table = (props) => {
                     <DeleteFilled style={{ color: "#BD1B0F" }} /> Delete
                 </Popconfirm>
             </Menu.Item>
-            <Menu.Item key="3" onClick={() => handleChallan(record)}>
-                Generate Challan
-            </Menu.Item>
+            
         </Menu>
     );
 
@@ -304,7 +320,16 @@ const Table = (props) => {
 
     return (
         <>
-            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false} />
+        <Button
+        type="primary"
+        onClick={handleChallanGeneration}
+        disabled={selectedRows.length === 0}
+        style={{ marginBottom: 16 }}
+      >
+        Generate Challan
+      </Button>
+            <StyledTable columns={columns} dataSource={props.data} rowKey="key" pagination={false}
+            rowSelection={rowSelection} />
             <Modal
                 title="Edit Student"
                 open={isModalOpen}
@@ -322,9 +347,55 @@ const Table = (props) => {
                 header={false}
                 width={1200}
             >
-                <div id="challan-content">
-                    <Challan student={selectedRowValues} />
-                </div>
+            <ReactToPrint
+          trigger={() => (
+            <Button type="primary" style={{ marginBottom: 16 }}>
+              Print All Challans
+            </Button>
+          )}
+          content={() => printRef.current}
+          pageStyle={`
+
+    @page {
+    size: landscape; 
+    margin: 10mm; 
+  }
+
+  @media print {
+    body {
+      background: white !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    #challan-content {
+      display: block;
+      margin: 0 !important;
+      padding: 0 !important;
+      page-break-inside: avoid;
+    }
+
+    .challan {
+        page-break-before: always;
+        background-color: white !important;
+        padding: 20px;
+        margin: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        overflow: hidden;
+      }
+  }
+`}
+        />
+
+        <div ref={printRef} id="challan-content" style={{ padding: '10px', backgroundColor: 'white' }}>
+          {selectedRows.map((student) => (
+            <div key={student.key} style={{ pageBreakInside: 'avoid' ,pageBreakAfter: 'always' }}>
+              <Challan student={student} />
+            </div>
+          ))}
+        </div>
+    
             </Modal>
         </>
     );
