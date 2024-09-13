@@ -369,7 +369,7 @@ const Table = (props) => {
     }
 
     #challan-content {
-      display: block;
+      
       margin: 0 !important;
       padding: 0 !important;
       page-break-inside: avoid;
@@ -382,7 +382,7 @@ const Table = (props) => {
         margin: 0;
         page-break-after: always;
         page-break-inside: avoid;
-        overflow: hidden;
+       
       }
   }
 `}
