@@ -61,7 +61,6 @@ const ChallanContainer = styled.div`
     src: url('/src/assets/fonts/ProximaNova-Regular.ttf') format('truetype');
   }
 
-  /* Main container styling */
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
@@ -72,23 +71,22 @@ const ChallanContainer = styled.div`
   text-align: center;
   color: #333;
   overflow: hidden;
-  page-break-after: always; /* Ensure this element ends on a new page */
-
-  /* Print-specific styles */
+  page-break-after: always; 
+ 
   @media print {
     body {
-      margin: 0; /* Adjust margins for printing */
-      background: none !important; /* Removes any background during print */
+      margin: 0; 
+       
     }
 
     .no-print {
-      display: none; /* Hides elements not needed during printing */
+      display: none; 
     }
 
-    page-break-after: always; /* Ensure the ChallanContainer ends on a new page */
+    page-break-after: always;
   }
 
-  /* Header section styling */
+
   .header {
     text-align: center;
     margin-bottom: 10px;
@@ -144,7 +142,7 @@ const ChallanContainer = styled.div`
     }
   }
 
-  /* Challan details section styling */
+ 
   .challan-details {
     text-align: left;
     margin-top: 20px;
@@ -175,8 +173,7 @@ const ChallanContainer = styled.div`
       }
     }
   }
-
-  /* Footer section styling */
+    
   .footer {
     margin-top: 20px;
     display: flex;
@@ -186,7 +183,7 @@ const ChallanContainer = styled.div`
   }
 `;
 
-// Container for buttons
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;

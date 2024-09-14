@@ -356,41 +356,65 @@ const Table = (props) => {
           content={() => printRef.current}
           pageStyle={`
 
-    @page {
-    size: landscape; 
-    margin: 10mm; 
+  @page {
+      size: landscape;
+      margin: 10mm; 
+    }
+      @media all {
+  .page-break {
+    display: none;
   }
-
-  @media print {
-    body {
-      background: white !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    #challan-content {
-      
-      margin: 0 !important;
-      padding: 0 !important;
-      page-break-inside: avoid;
-    }
-
-    .challan {
-        page-break-before: always;
-        background-color: white !important;
-        padding: 20px;
-        margin: 0;
-        page-break-after: always;
-        page-break-inside: avoid;
        
+    @media print {
+      html, body {
+        height: initial !important;
+    overflow: initial !important;
+    -webkit-print-color-adjust: exact;
       }
+
+      @media print {
+  .page-break {
+    margin-top: 1rem;
+    display: block;
+    page-break-before: auto;
   }
-`}
+   
+      #challan-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  page-break-inside: avoid;
+}
+
+      .challan {
+  page-break-inside: avoid; 
+  page-break-after: always; 
+  background-color: white !important;
+  padding: 10px;
+  margin: 0 !important;
+ overflow: visible !important;
+ height: auto !important;
+ width: 100% !important;
+}
+
+      .challan:first-of-type {
+  page-break-before: avoid !important; 
+  margin-top: 0 !important; 
+  padding-top: 0 !important; 
+  overflow: visible !important;
+}
+    }
+  `}
         />
 
         <div ref={printRef} id="challan-content" style={{ padding: '10px', backgroundColor: 'white' }}>
-          {selectedRows.map((student) => (
-            <div key={student.key} style={{ pageBreakInside: 'avoid' ,pageBreakAfter: 'always' }}>
+          {selectedRows.map((student, index) => (
+            <div key={student.key} 
+            style={{ 
+                pageBreakInside: 'avoid', 
+                pageBreakAfter: 'always',
+                
+              }}
+            >
               <Challan student={student} />
             </div>
           ))}
