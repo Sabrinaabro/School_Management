@@ -1,49 +1,53 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Row, Col, Button, Modal, Input } from "antd";
+import { Row, Col, Button, Modal, Input, DatePicker } from "antd";
 import logo from "/src/assets/evas.jpg";
 import ublLogo from "/src/assets/ubl.png";
 import ReactToPrint from 'react-to-print';
+import moment from 'moment';
+import {format} from 'date-fns';
 
 
-const addWorkingDays = (date, daysToAdd) => {
-  let currentDate = new Date(date);
-  let addedDays = 0;
+
+// const formatDate = (date) => {
+//   if (!date || !(date instanceof Date)) {
+//     return "Invalid Date"; // Fallback value or message
+//   }
+//   return date.getDate(); // Or other date manipulations you need
+// };
+
+// const addWorkingDays = (date, daysToAdd) => {
+//   let currentDate = new Date(date);
+//   let addedDays = 0;
   
-  while (addedDays < daysToAdd) {
-    currentDate.setDate(currentDate.getDate() + 1);
-    const day = currentDate.getDay();
-    if (day !== 6 && day !== 0) { 
-      addedDays++;
-    }
-  }
+//   while (addedDays < daysToAdd) {
+//     currentDate.setDate(currentDate.getDate() + 1);
+//     const day = currentDate.getDay();
+//     if (day !== 6 && day !== 0) { 
+//       addedDays++;
+//     }
+//   }
   
-  return currentDate;
-};
-const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); 
-  const year = String(date.getFullYear()).slice(-2);
-  return `${day}/${month}/${year}`;
-};
+//   return currentDate;
+// };
 
-const numberToWords = (num) => {
-  const a = [
-    "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
-    "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
-  ];
-  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+// const numberToWords = (num) => {
+//   const a = [
+//     "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+//     "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+//   ];
+//   const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
 
-  const inWords = (n) => {
-    if (n < 20) return a[n];
-    const digit = n % 10;
-    if (n < 100) return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
-    if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 === 0 ? "" : " and " + inWords(n % 100));
-    return inWords(Math.floor(n / 1000)) + " Thousand" + (n % 1000 !== 0 ? " " + inWords(n % 1000) : "");
-  };
+//   const inWords = (n) => {
+//     if (n < 20) return a[n];
+//     const digit = n % 10;
+//     if (n < 100) return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
+//     if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 === 0 ? "" : " and " + inWords(n % 100));
+//     return inWords(Math.floor(n / 1000)) + " Thousand" + (n % 1000 !== 0 ? " " + inWords(n % 1000) : "");
+//   };
 
-  return inWords(num) + " Only";
-};
+//   return inWords(num) + " Only";
+// };
 
 const ChallanContainer = styled.div`
    @font-face {
@@ -64,18 +68,20 @@ const ChallanContainer = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 25px 40px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #fff;
   text-align: center;
   color: #333;
   overflow: hidden;
+  height: auto;
   page-break-after: always; 
  
   @media print {
     body {
       margin: 0; 
+      height: auto;
        
     }
 
@@ -135,7 +141,7 @@ const ChallanContainer = styled.div`
     p {
       margin: 0;
       font-family: 'Active Heart';
-      font-weight: regular;
+      font-weight: bold;
       font-size: 12px;
       text-align: center;
       margin-bottom: 25px;
@@ -199,26 +205,34 @@ const ButtonContainer = styled.div`
 
 const Challan = ({ student = {} }) => {
   const challanRef = useRef(null);
-  const issueDate = new Date(); 
-  const dueDate = addWorkingDays(issueDate, 6); 
-  const expiryDate = addWorkingDays(issueDate, 10); 
+  // const issueDate = new Date(); 
+  
 
   const {
     name = "Student Name",
     parent = "Parent Name",
     grade = "Grade",
     gr_no = "1234",
-    tuitionFee = 4500, 
+    // tuitionFee = 4500, 
      
     
   } = student;
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [monthName, setMonthName] = useState();
+  const [tuitionFee, setTuitionFee] = useState(0);
   const [arrears, setArrears] = useState(0);
   const [lateFee, setLateFee] = useState(0);
+  const [issueDate, setIssueDate] = useState();
+  const [dueDate, setDueDate] = useState();
+  const [expiryDate, setExpiryDate] = useState();
 
   const totalAmount = tuitionFee + arrears;
   const totalAfterLateFee = totalAmount + lateFee;
+
+  // const dueDate = addWorkingDays(issueDate, 6); 
+  // const expiryDate = addWorkingDays(issueDate, 10); 
 
   // Function to show modal
   const showModal = () => {
@@ -271,6 +285,7 @@ const Challan = ({ student = {} }) => {
                 <p><strong>Father's Name:</strong> {parent}</p>
                 <p><strong>Grade:</strong> {String(grade)}</p>
                 <p><strong>GR No/Buyer Code:</strong> {gr_no}</p>
+                <p><strong>Fees for the Month of:</strong> {monthName}</p>
                 <table>
                   <thead>
                     <tr>
@@ -300,16 +315,16 @@ const Challan = ({ student = {} }) => {
                       <td>{totalAfterLateFee}</td>
                     </tr>
                     <tr>
-                      <td style={{ border: 'none' }}>Amount in Words: {numberToWords(totalAfterLateFee)}</td>
+                      {/* <td style={{ border: 'none' }}>Amount in Words: {numberToWords(totalAfterLateFee)}</td> */}
                       <td style={{ border: 'none' }}></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div className="footer">
-                <div>Issue Date: {formatDate(issueDate)}</div>
-                <div>Due Date: {formatDate(dueDate)}</div>
-                <div>Expiry Date: {formatDate(expiryDate)}</div>
+              <div>Issue Date: {issueDate ? format(new Date(issueDate), 'MM/dd/yyyy') : ''}</div>
+              <div>Due Date: {dueDate ? format(new Date(dueDate), 'MM/dd/yyyy') : ''}</div>
+              <div>Expiry Date: {expiryDate ? format(new Date(expiryDate), 'MM/dd/yyyy'): ''}</div>
               </div>
               <div className="footer">
               <div style={{ padding: '30px' }}>School Accountant</div>
@@ -333,7 +348,26 @@ const Challan = ({ student = {} }) => {
           onCancel={handleCancel}
         >
           <div>
-          <label style={{ display: 'block', marginBottom: 5 }}>Enter Arrears</label>
+
+          <label style={{ display: 'block', marginBottom: 5 }}>Enter Month of Fee</label>
+            <Input
+              type="string"
+              placeholder="Enter Month of Fee"
+              value={monthName}
+              onChange={(e) => setMonthName(String(e.target.value))}
+              style={{ marginBottom: 10 }}
+            />
+
+          <label style={{ display: 'block', marginBottom: 5 }}>Enter Tuition Fee</label>
+            <Input
+              type="number"
+              placeholder="Enter Tuition Fee"
+              value={tuitionFee}
+              onChange={(e) => setTuitionFee(Number(e.target.value))}
+              style={{ marginBottom: 10 }}
+            />
+
+            <label style={{ display: 'block', marginBottom: 5 }}>Enter Arrears</label>
             <Input
               type="number"
               placeholder="Enter Arrears"
@@ -352,6 +386,42 @@ const Challan = ({ student = {} }) => {
             />
           </div>
         </Modal>
+
+        <Button type="primary" onClick={setIsModalOpen} className="no-print">
+          Add Date
+        </Button>
+
+        <Modal
+          title="Enter Date"
+          visible={isModalOpen}
+          onOk={() => setIsModalOpen(false)}
+          onCancel={() => setIsModalOpen(false)}
+        >
+          <div>
+
+          <label style={{ display: 'block', marginBottom: 5 }}>Enter Issue Date</label>
+    <DatePicker
+      style={{ marginBottom: 10, width: '100%' }}
+      value={issueDate ? moment(issueDate) : null}
+      onChange={(date) => setIssueDate(date ? date.toDate() : null)}
+    />
+
+    <label style={{ display: 'block', marginBottom: 5 }}>Enter Due Date</label>
+    <DatePicker
+      style={{ marginBottom: 10, width: '100%' }}
+      value={dueDate ? moment(dueDate) : null}
+      onChange={(date) => setDueDate(date ? date.toDate() : null)}
+    />
+    <label style={{ display: 'block', marginBottom: 5 }}>Enter Expiry Date</label>
+    <DatePicker
+      style={{ marginBottom: 10, width: '100%' }}
+      value={expiryDate ? moment(expiryDate) : null}
+      onChange={(date) => setExpiryDate(date ? date.toDate() : null)}
+    />
+
+    </div>
+        </Modal>
+
         <Button type="primary" onClick={printChallan} className="no-print">
           Print Challan
         </Button>
